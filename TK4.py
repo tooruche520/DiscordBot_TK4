@@ -9,7 +9,10 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 
 with open('token.json', "r", encoding = "utf8") as file:
     data = json.load(file)
+    token = data['token']
 
+with open('data.json', "r", encoding = "utf8") as file:
+    data = json.load(file)
 
 @bot.event
 async def on_ready():
@@ -33,4 +36,4 @@ async def 棒棒糖(ctx):
     await ctx.send(f'謝謝{ctx.author.mention}的棒棒糖')
 
     
-bot.run(data['token']) 
+bot.run(token) 
