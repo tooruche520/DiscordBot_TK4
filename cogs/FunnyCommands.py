@@ -2,7 +2,7 @@ from discord.ext import commands
 import discord
 
 
-class Grettings(commands.Cog):
+class FunnyCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -14,7 +14,7 @@ class Grettings(commands.Cog):
 
 # 要用 async await 
 async def setup(bot):
-    await bot.add_cog(Grettings(bot))
+    await bot.add_cog(FunnyCommands(bot))
 
 
 # bot 前面記得加 self
