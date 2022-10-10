@@ -9,8 +9,14 @@ class FunnyCommands(commands.Cog):
     # commands
     @commands.command()
     async def 棒棒糖(self, ctx):
-        print(f'{ctx.author}給了TK4一根棒棒糖')
+        print(f'{ctx.author} 給了TK4一根棒棒糖')
         await ctx.send(f'謝謝 {ctx.author.mention} 的棒棒糖')
+
+    # commands
+    @commands.command()
+    async def 晚安(self, ctx):
+        print(f'{ctx.author} 去睡覺了')
+        await ctx.send(f'{ctx.author.mention} 哥哥晚安晚安汪(*´∀`)~♥')
 
 # 要用 async await 
 async def setup(bot):
