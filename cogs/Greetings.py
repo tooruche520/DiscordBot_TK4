@@ -2,9 +2,6 @@ from discord.ext import commands
 import discord
 import json
 
-with open('data.json', "r", encoding = "utf8") as file:
-    data = json.load(file)
-
 class Grettings(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
