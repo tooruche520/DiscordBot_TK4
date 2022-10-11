@@ -14,7 +14,7 @@ class Grettings(commands.Cog):
     async def on_member_join(self, member):
         print(f'{member} join')
         channel = self.bot.get_channel(int(self.data["TK4開發測試頻道"]))
-        Identity = self.bot.get_channel(int(self.data["領取身分組"]))
+        Identity = self.bot.get_channel(int(self.data["領取身分組頻道"]))
         await channel.send(f'恭喜 {member.mention} 踏入漏電的第一步\n請至 **{Identity.mention}** 領取你的身分組')
 
     # event
