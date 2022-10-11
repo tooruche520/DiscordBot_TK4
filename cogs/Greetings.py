@@ -18,7 +18,7 @@ class Grettings(commands.Cog):
         print(f'{member} join')
         channel = self.bot.get_channel(int(self.data["TK4開發測試頻道"]))
         Identity = self.bot.get_channel(int(self.data["領取身分組"]))
-        await channel.send(f'恭喜{member.mention}踏入漏電的第一步 \n 請至**{Identity.mention}**領取你的身分組')
+        await channel.send(f'恭喜 {member.mention} 踏入漏電的第一步\n請至 **{Identity.mention}** 領取你的身分組')
 
     # event
     @commands.Cog.listener()
@@ -31,13 +31,8 @@ class Grettings(commands.Cog):
         except:
             print(f'{member} leave')
             channel = self.bot.get_channel(int(self.data["TK4開發測試頻道"]))
-            await channel.send(f' 噢不， {member.mention} 的電漏光了')
+            await channel.send(f'噢不， {member.mention} 的電漏光了')
 
-    # # commands
-    # @commands.command()
-    # async def 棒棒糖(self, ctx):
-    #     print(f'{ctx.author}給了TK4一根棒棒糖')
-    #     await ctx.send(f'謝謝 {ctx.author.mention }的棒棒糖')
 
 # 要用 async await 
 async def setup(bot):
