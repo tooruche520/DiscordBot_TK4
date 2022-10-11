@@ -1,9 +1,6 @@
-from email import message
-from http import client
-from multiprocessing.connection import Client
+
 from discord.ext import commands 
 import discord
-
 
 class FunnyCommands(commands.Cog):
     def __init__(self, bot):
