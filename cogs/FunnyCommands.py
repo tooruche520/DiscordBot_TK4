@@ -1,10 +1,14 @@
 from discord.ext import commands 
 import discord
-
+import json
 
 class FunnyCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+        with open('data.json', "r", encoding = "utf8") as file:
+            data = json.load(file)
+            self.emoji = data["emoji_list"]
 
     # commands
     @commands.command()
@@ -37,13 +41,13 @@ class FunnyCommands(commands.Cog):
         loveFood = ['香菜','布丁','咖喱']
         print(f'{ctx.author} 打算喂你吃 {food}')
         if (food == ""):
-            await ctx.send(f'{ctx.author.mention} 想喂小徹什麽? :tc_tongue:')
+            await ctx.send(f'{ctx.author.mention} 想喂小徹什麽? {self.emoji["tc_tongue"]}')
         elif (food in hateFood):
-            await ctx.send(f'小徹拒絕了 {ctx.author.mention} 用 {food} 喂食 :tc_angry:')
+            await ctx.send(f'小徹拒絕了 {ctx.author.mention} 用 {food} 喂食 {self.emoji["tc_angry"]}')
         elif(food in loveFood):
-            await ctx.send(f'小徹接受了 {ctx.author.mention} 用 {food} 喂食 :tc_happy:')
+            await ctx.send(f'小徹接受了 {ctx.author.mention} 用 {food} 喂食 {self.emoji["tc_happy"]}')
         else:
-            await ctx.send(f'原來 {ctx.author.mention} 喜歡吃 {food} :tc_is_husky:')
+            await ctx.send(f'原來 {ctx.author.mention} 喜歡吃 {food} {self.emoji["tc_is_husky"]}')
             
 # 要用 async await 
 async def setup(bot):
