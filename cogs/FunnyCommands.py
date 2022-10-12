@@ -1,6 +1,21 @@
 from discord.ext import commands 
 import discord
 import json
+import logging as log
+
+# logger = log.getLogger()
+# logger.setLevel(log.INFO)
+# formatter = log.Formatter(fmt='[%(asctime)s] [%(levelname)s] [%(module)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+
+# ch = log.StreamHandler()
+# ch.setFormatter(formatter)
+
+# log_filename = 'log.txt'
+# fh = log.FileHandler(log_filename, encoding='utf-8')
+# fh.setFormatter(formatter)
+
+# logger.addHandler(ch)
+# logger.addHandler(fh)
 
 class FunnyCommands(commands.Cog):
     def __init__(self, bot):
@@ -13,25 +28,25 @@ class FunnyCommands(commands.Cog):
     # commands
     @commands.command()
     async def 棒棒糖(self, ctx):
-        print(f'{ctx.author} 給了TK4一根棒棒糖')
+        log.info(f'{ctx.author} 給了TK4一根棒棒糖')
         await ctx.send(f'謝謝 {ctx.author.mention} 的棒棒糖')
 
     # commands
     @commands.command()
     async def 晚安(self, ctx):
-        print(f'{ctx.author} 去睡覺了')
+        log.info(f'{ctx.author} 去睡覺了')
         await ctx.send(f'{ctx.author.mention} 晚安晚安汪(*´∀`)~♥')
 
     # commands
     @commands.command()
     async def 尖頭拉瑞(self, ctx):
-        print(f'{ctx.author} 叫您尖頭拉瑞')
+        log.info(f'{ctx.author} 叫您尖頭拉瑞')
         await ctx.send(f'對 {ctx.author.mention} 釋放十萬伏特攻擊 -`д´-')
         
     # commands
     @commands.command()
     async def 小徹(self, ctx):
-        print(f'{ctx.author} 在叫你')
+        log.info(f'{ctx.author} 在叫你')
         await ctx.send(f'{ctx.author.mention} 在攝攝')
         
     # commands
@@ -39,7 +54,7 @@ class FunnyCommands(commands.Cog):
     async def 吃(self, ctx, food=""):
         hateFood = ['多益','茄子','青椒']
         loveFood = ['香菜','布丁','咖喱']
-        print(f'{ctx.author} 打算喂你吃 {food}')
+        log.info(f'{ctx.author} 打算喂你吃 {food}')
         if (food == ""):
             await ctx.send(f'{ctx.author.mention} 想喂小徹什麽? {self.emoji["tc_tongue"]}')
         elif (food in hateFood):

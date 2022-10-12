@@ -3,11 +3,25 @@ import discord
 import json
 import os
 import asyncio
+import logging as log
 
 intents=discord.Intents.all()
-
 client = discord.Client(intents=intents)
 bot = commands.Bot(command_prefix="!", intents=intents)
+
+logger = log.getLogger()
+logger.setLevel(log.INFO)
+formatter = log.Formatter(fmt='[%(asctime)s] [%(levelname)s] [%(module)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+
+ch = log.StreamHandler()
+ch.setFormatter(formatter)
+
+log_filename = 'log.txt'
+fh = log.FileHandler(log_filename, encoding='utf-8')
+fh.setFormatter(formatter)
+
+logger.addHandler(ch)
+logger.addHandler(fh)
 
 with open('token.json', "r", encoding = "utf8") as file:
     data = json.load(file)
@@ -16,10 +30,11 @@ with open('token.json', "r", encoding = "utf8") as file:
 @bot.event
 async def on_ready():
     print("Bot in ready")
+    log.info("Bot in ready")
 
 @bot.command()
 async def reload(ctx, extension):
-    print(f"reloading {extension}")
+    log.info(f"reloading {extension}")
     await bot.reload_extension(f"cogs.{extension}")
     await ctx.send(f"reloaded {extension}")
 
