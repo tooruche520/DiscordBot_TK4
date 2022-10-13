@@ -47,6 +47,18 @@ async def reload_all(ctx):
     await ctx.send(f"reloaded all")
     # await bot.reload_extension(f"cogs.{extension}")
 
+# 臨時用
+# @bot.command()
+# async def delete(ctx, limit):
+#     async for message in ctx.channel.history(limit=int(limit)):
+#         if message.author == bot.user and '升到了第' in message.content:
+#             await message.delete()
+#             log.info(f"deleted message {message.content}")
+#         else:
+#             log.info(f"no delete message {message.content}")
+#     log.info(f"completed deleted message")
+        
+
 async def load_extensions():
     for filename in os.listdir("./cogs"):
         if filename.endswith(".py"):
