@@ -3,3 +3,4 @@ token.json
 *.pyc
 test.py
 log.txt
+script.py
