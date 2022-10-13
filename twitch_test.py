@@ -1,10 +1,10 @@
-import os
-import json
-import discord
-import requests
 from discord.ext import tasks, commands
 from twitchAPI.twitch import Twitch
 from discord.utils import get
+import discord
+import json
+import requests
+import logging as log
 
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix='$', intents=intents)
@@ -19,6 +19,7 @@ with open('token.json', "r", encoding = "utf8") as file:
 with open('data.json', "r", encoding = "utf8") as file:
     data = json.load(file)
     my_channel_ID = data['TK4開發測試頻道']
+    role_twitch = data['role_list']['優質圖奇觀眾']
 
 body = {
     'client_id': APP_ID,
@@ -81,9 +82,10 @@ last_started_at = '2022-10-12T02:38:03Z'
 # Executes when bot is started
 @bot.event
 async def on_ready():
-    @tasks.loop(seconds=1)
+    @tasks.loop(seconds=10)
     async def live_notifs_loop():
-        guild = bot.get_guild(1234567890)
+        guild = bot.get_guild(1028268840112640100)
+        role = guild.get_role(int(role_twitch))
         channel = bot.get_channel(int(my_channel_ID))
 
         status, response = checkuser(twitch_name)
@@ -93,13 +95,10 @@ async def on_ready():
             current_start_time = response["data"][0]["started_at"]
             if current_start_time != last_started_at:
                 last_started_at = current_start_time
-                async for message in channel.history(limit=200):
-
-                    await channel.send(
-                        f":red_circle: **LIVE**\n{twitch_name} 現在正在直播! 快來看看吧!"
-                        f"\nhttps://www.twitch.tv/{twitch_name}")
-                    print(f"{twitch_name} started streaming. Sending a notification.")
-                    break
+                await channel.send(
+                    f"{role.mention}\n{twitch_name} 現在正在直播! 快來看看吧!"
+                    f"\nhttps://www.twitch.tv/{twitch_name}")
+                log.info(f"{twitch_name} started streaming. Sending a notification.")
 
     live_notifs_loop.start()
 
