@@ -4,3 +4,5 @@ token.json
 test.py
 log.txt
 script.py
+users.json
+twitch_test.py
