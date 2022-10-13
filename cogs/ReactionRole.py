@@ -9,10 +9,19 @@ class ReactionRole(commands.Cog):
 
         with open('data.json', "r", encoding = "utf8") as file:
             data = json.load(file)
+            self.channel_role = data['TK4開發測試頻道']
             self.emoji = data["emoji_list"]
             self.role_list = data["role_list"]
             self.message_role = int(data["領取身分組訊息"])
 
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        msg = await self.bot.get_channel(int(self.channel_role)).fetch_message(self.message_role)
+        await msg.add_reaction(str(self.emoji['tc_happy']))
+        await msg.add_reaction(str(self.emoji['tc_is_husky']))        
+        await msg.add_reaction(str(self.emoji['tc_tongue']))
+        
 
     # event
     @commands.Cog.listener()
@@ -30,6 +39,7 @@ class ReactionRole(commands.Cog):
 
         await add_reaction(self, payload, 'tc_happy', '普通人')
         await add_reaction(self, payload, 'tc_is_husky', '小色鬼')
+        await add_reaction(self, payload, 'tc_tongue', '優質圖奇觀眾')
 
     # event
     @commands.Cog.listener()
@@ -48,6 +58,7 @@ class ReactionRole(commands.Cog):
 
         await remove_reaction(self, payload, 'tc_happy', '普通人')
         await remove_reaction(self, payload, 'tc_is_husky', '小色鬼')
+        await add_reaction(self, payload, 'tc_tongue', '優質圖奇觀眾')
 
 
 
