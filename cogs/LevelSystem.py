@@ -6,7 +6,10 @@ import logging as log
 class LevelSystem(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-    
+
+        with open('data.json', "r", encoding = "utf8") as file:
+            self.data = json.load(file)
+
     async def update_data(self, users, user):
         user_id = str(user.id)
         # print(user.id)
@@ -27,10 +30,12 @@ class LevelSystem(commands.Cog):
         user_id = str(user.id)
         experience = users[user_id]['experience']
         lvl_start = users[user_id]['level']
-        lvl_end = int(experience ** 1/4)
+        lvl_end = int(experience ** (1/4))
         
         if lvl_start < lvl_end:
-            await channel.send(f'{user.mention} 升到了第 {lvl_end}')
+            users[user_id]['level'] = lvl_end
+            log.info(f'{user.mention} 升到了第{lvl_end}等')
+            await channel.send(f'{user.mention} 升到了第{lvl_end}等')
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
@@ -51,9 +56,10 @@ class LevelSystem(commands.Cog):
         with open('users.json', "r", encoding = "utf8") as f:
             users = json.load(f)
         
+        channel = self.bot.get_channel(int(self.data["等級測試"]))
         await self.update_data(users, message.author)
         await self.add_experience(users, message.author, 5)
-        await self.level_up(users, message.author, message.channel)
+        await self.level_up(users, message.author, channel)
         
         with open('users.json', "w", encoding = "utf8") as f:
             json.dump(users, f)
