@@ -29,21 +29,20 @@ with open('token.json', "r", encoding = "utf8") as file:
 
 @bot.event
 async def on_ready():
-    print("Bot in ready")
     log.info("Bot in ready")
 
 @bot.command()
 async def reload(ctx, extension):
-    log.info(f"reloading {extension}")
     await bot.reload_extension(f"cogs.{extension}")
+    log.info(f"Completed reloading {extension}")
     await ctx.send(f"reloaded {extension}")
 
 @bot.command()
 async def reload_all(ctx):
-    print(f"reloading all extensions...")
     for filename in os.listdir("./cogs"):
         if filename.endswith(".py"):
             await bot.reload_extension(f"cogs.{filename[:-3]}")
+    log.info(f"Completed reloading all extensions.")
     await ctx.send(f"reloaded all")
     # await bot.reload_extension(f"cogs.{extension}")
 
@@ -60,15 +59,21 @@ async def reload_all(ctx):
         
 
 async def load_extensions():
-    for filename in os.listdir("./cogs"):
-        if filename.endswith(".py"):
-            await bot.load_extension(f"cogs.{filename[:-3]}")
+    try:
+        for filename in os.listdir("./cogs"):
+            if filename.endswith(".py"):
+                await bot.load_extension(f"cogs.{filename[:-3]}")
+    except Exception as e:
+        log.error(e)
 
 async def main():
     async with bot:
         await load_extensions()
         await bot.start(token)
 
-asyncio.run(main())
+try:
+    asyncio.run(main())
+except Exception as e:
+    log.error(f'Bot ended: {e.message}')
 
-bot.run(token) 
+
