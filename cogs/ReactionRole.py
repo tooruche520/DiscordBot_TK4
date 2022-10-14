@@ -58,7 +58,7 @@ class ReactionRole(commands.Cog):
 
         await remove_reaction(self, payload, 'tc_happy', '普通人')
         await remove_reaction(self, payload, 'tc_is_husky', '小色鬼')
-        await add_reaction(self, payload, 'tc_tongue', '優質圖奇觀眾')
+        await remove_reaction(self, payload, 'tc_tongue', '優質圖奇觀眾')
 
 
 
