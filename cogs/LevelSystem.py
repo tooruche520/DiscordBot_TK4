@@ -64,7 +64,19 @@ class LevelSystem(commands.Cog):
         with open('users.json', "w", encoding = "utf8") as f:
             json.dump(users, f)
 
-            
+
+    @commands.command()
+    async def level(self, ctx):
+        try:
+            with open('users.json', "r", encoding = "utf8") as f:
+                users = json.load(f)
+                user_id = str(ctx.author.id) 
+                experience = users[user_id]['experience']
+                level = users[user_id]['level']
+                await ctx.send(f'{ctx.author.mention} 目前是等級{level}，累積了{experience}經驗值!!')
+        except Exception as e:
+            log.info("Error loading users.json") 
+
 # 要用 async await 
 async def setup(bot):
     await bot.add_cog(LevelSystem(bot))
