@@ -1,0 +1,5 @@
+[2022-10-15 01:01:18] [ERROR] [TK4] Extension 'cogs.StreamingNotifaction' raised an error: KeyError: 'TWITCH_APP_ID'
+[2022-10-15 01:01:18] [INFO] [client] logging in using static token
+[2022-10-15 01:01:20] [INFO] [gateway] Shard ID None has connected to Gateway (Session ID: de10df6230d5c6f9179131360f09bd11).
+[2022-10-15 01:01:22] [INFO] [TK4] Bot in ready
+[2022-10-15 01:01:22] [INFO] [TK4] The Folder "LogFiles" are already have
