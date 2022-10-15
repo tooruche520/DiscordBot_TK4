@@ -8,7 +8,12 @@ import time
 
 log_dir = os.getcwd() + '\\LogFiles\\'
 log_path = os.getcwd() + os.sep + log_dir
-os.makedirs(log_dir)
+folder = os.path.exists(log_dir)
+if not folder:
+    os.makedirs(log_dir)
+    log.info(f'Create Folder "LogFiles" ')
+else:
+    log.info(f'The Folder "LogFiles" are already have')
 
 intents=discord.Intents.all()
 client = discord.Client(intents=intents)
@@ -32,18 +37,9 @@ with open('token.json', "r", encoding = "utf8") as file:
     data = json.load(file)
     token = data['DISCORD_BOT_TOKEN']
 
-def LogFolder(path):
-    folder = os.path.exists(path)
-    if not folder:
-        os.makedirs(path)
-        log.info(f'Create Folder "LogFiles" ')
-    else:
-        log.info(f'The Folder "LogFiles" are already have')
-
 @bot.event
 async def on_ready():
     log.info("Bot in ready")
-    LogFolder(log_dir)
 
 @bot.command()
 async def reload(ctx, extension):
