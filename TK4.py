@@ -5,7 +5,7 @@ import os
 import asyncio
 import time
 from TK4_Logger import TK4_logger
-# import logging as log
+import logging as log
 
 
 # log_dir = os.getcwd() + '\\LogFiles\\'
@@ -37,7 +37,7 @@ intents = discord.Intents.all()
 client = discord.Client(intents=intents)
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-log = TK4_logger()
+TK4_logger()
 
 with open('token.json', "r", encoding = "utf8") as file:
     data = json.load(file)

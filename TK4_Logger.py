@@ -3,16 +3,14 @@ import time
 import logging as log
 
 def TK4_logger():
-    log_dir = os.getcwd() + '\\LogFiles\\'
-    log_path = os.getcwd() + os.sep + log_dir
+    log_dir = os.getcwd() + '/LogFiles/'
+    # log_path = os.getcwd() + os.sep + log_dir
     folder = os.path.exists(log_dir)
     if not folder:
         os.makedirs(log_dir)
-        log.info(f'Create Folder "LogFiles" ')
-    else:
-        log.info(f'The Folder "LogFiles" are already have')
-
-
+        # log.info(f'Create Folder "LogFiles" ')
+    # else:
+        # log.info(f'The Folder "LogFiles" are already have')
 
     logger = log.getLogger()
     logger.setLevel(log.INFO)
@@ -27,8 +25,9 @@ def TK4_logger():
 
     logger.addHandler(ch)
     logger.addHandler(fh)
-    logger.propagate = False
 
-    log.info('TK4_logger')
+    log.info('TK4_logger called!')
 
-    return log
+    # return log
+
+# TK4_logger()
