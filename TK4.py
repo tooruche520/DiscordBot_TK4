@@ -3,35 +3,41 @@ import discord
 import json
 import os
 import asyncio
-import logging as log
 import time
+from TK4_Logger import TK4_logger
+# import logging as log
 
-log_dir = os.getcwd() + '\\LogFiles\\'
-log_path = os.getcwd() + os.sep + log_dir
-folder = os.path.exists(log_dir)
-if not folder:
-    os.makedirs(log_dir)
-    log.info(f'Create Folder "LogFiles" ')
-else:
-    log.info(f'The Folder "LogFiles" are already have')
 
-intents=discord.Intents.all()
+# log_dir = os.getcwd() + '\\LogFiles\\'
+# log_path = os.getcwd() + os.sep + log_dir
+# folder = os.path.exists(log_dir)
+# if not folder:
+#     os.makedirs(log_dir)
+#     log.info(f'Create Folder "LogFiles" ')
+# else:
+#     log.info(f'The Folder "LogFiles" are already have')
+
+
+# logger = log.getLogger()
+# logger.setLevel(log.INFO)
+# formatter = log.Formatter(fmt='[%(asctime)s] [%(levelname)s] [%(module)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S',)
+
+# ch = log.StreamHandler()
+# ch.setFormatter(formatter)
+
+# log_filename = log_dir + time.strftime("%Y-%m-%d") + ' log .txt'
+# fh = log.FileHandler(log_filename, encoding='utf-8',)
+# fh.setFormatter(formatter)
+
+# logger.addHandler(ch)
+# logger.addHandler(fh)
+
+
+intents = discord.Intents.all()
 client = discord.Client(intents=intents)
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-logger = log.getLogger()
-logger.setLevel(log.INFO)
-formatter = log.Formatter(fmt='[%(asctime)s] [%(levelname)s] [%(module)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S',)
-
-ch = log.StreamHandler()
-ch.setFormatter(formatter)
-
-log_filename = log_dir + time.strftime("%Y-%m-%d") + ' log .txt'
-fh = log.FileHandler(log_filename, encoding='utf-8',)
-fh.setFormatter(formatter)
-
-logger.addHandler(ch)
-logger.addHandler(fh)
+log = TK4_logger()
 
 with open('token.json', "r", encoding = "utf8") as file:
     data = json.load(file)
