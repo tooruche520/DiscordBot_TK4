@@ -3,19 +3,14 @@ import discord
 import json
 import logging as log
 
-# logger = log.getLogger()
-# logger.setLevel(log.INFO)
-# formatter = log.Formatter(fmt='[%(asctime)s] [%(levelname)s] [%(module)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
-
-# ch = log.StreamHandler()
-# ch.setFormatter(formatter)
-
-# log_filename = 'log.txt'
-# fh = log.FileHandler(log_filename, encoding='utf-8')
-# fh.setFormatter(formatter)
-
-# logger.addHandler(ch)
-# logger.addHandler(fh)
+# | 指令       | 描述                    | 經驗值             | 備註                    |
+# | ---------- | ----------------------- | ------------------ | ----------------------- |
+# | !棒棒糖    | 餵 TK4 一根棒棒糖       | 增加 {N}           |                         |
+# | !晚安      | 跟 TK4 說晚安           | 增加 {N}           |                         |
+# | !尖頭拉瑞  | 對 TK4 說尖頭拉瑞       | **經驗值不會增加** | 小徹不開心，TK4也不開心 |
+# | !吃 \*食物 | 讓 TK4 幫忙送食物給小徹 | 看你給什麼         | 給喜歡的可能會加比較多  |
+# | 以下待加入 | ----------------------- | ------------------ | ----------------------- |
+# | !rua       | 摸摸TK4 uwu             | 增加 {N}           |                         |
 
 class FunnyCommands(commands.Cog):
     def __init__(self, bot):
@@ -48,7 +43,13 @@ class FunnyCommands(commands.Cog):
     async def 小徹(self, ctx):
         log.info(f'{ctx.author} 在叫你')
         await ctx.send(f'{ctx.author.mention} 在攝攝')
-        
+
+    # commands
+    @commands.command()
+    async def rua(self, ctx):
+        log.info(f'{ctx.author} 在叫你')
+        await ctx.send(f'{ctx.author.mention} 多...摸摸我一點汪.. {self.emoji["tc_is_husky"]}')
+
     # commands
     @commands.command()
     async def 吃(self, ctx, food=""):
