@@ -7,5 +7,6 @@ script.py
 users.json
 twitch_test.py
 bot-venv/
+venv/
 logs/
 .env
