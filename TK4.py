@@ -6,31 +6,7 @@ import asyncio
 import time
 from TK4_Logger import TK4_logger
 import logging as log
-
-
-# log_dir = os.getcwd() + '\\LogFiles\\'
-# log_path = os.getcwd() + os.sep + log_dir
-# folder = os.path.exists(log_dir)
-# if not folder:
-#     os.makedirs(log_dir)
-#     log.info(f'Create Folder "LogFiles" ')
-# else:
-#     log.info(f'The Folder "LogFiles" are already have')
-
-
-# logger = log.getLogger()
-# logger.setLevel(log.INFO)
-# formatter = log.Formatter(fmt='[%(asctime)s] [%(levelname)s] [%(module)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S',)
-
-# ch = log.StreamHandler()
-# ch.setFormatter(formatter)
-
-# log_filename = log_dir + time.strftime("%Y-%m-%d") + ' log .txt'
-# fh = log.FileHandler(log_filename, encoding='utf-8',)
-# fh.setFormatter(formatter)
-
-# logger.addHandler(ch)
-# logger.addHandler(fh)
+from dotenv import dotenv_values
 
 
 intents = discord.Intents.all()
@@ -38,10 +14,8 @@ client = discord.Client(intents=intents)
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 TK4_logger()
-
-with open('token.json', "r", encoding = "utf8") as file:
-    data = json.load(file)
-    token = data['DISCORD_BOT_TOKEN']
+config = dotenv_values(".env")
+DISCORD_BOT_TOKEN = config.get("DISCORD_BOT_TOKEN")
 
 @bot.event
 async def on_ready():
@@ -85,7 +59,7 @@ async def load_extensions():
 async def main():
     async with bot:
         await load_extensions()
-        await bot.start(token)
+        await bot.start(DISCORD_BOT_TOKEN)
 
 try:
     asyncio.run(main())

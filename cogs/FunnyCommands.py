@@ -2,6 +2,7 @@ from discord.ext import commands
 import discord
 import json
 import logging as log
+from src.Id_collection import channle_id, emoji_list
 
 # | 指令       | 描述                    | 經驗值             | 備註                    |
 # | ---------- | ----------------------- | ------------------ | ----------------------- |
@@ -15,10 +16,6 @@ import logging as log
 class FunnyCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
-        with open('data.json', "r", encoding = "utf8") as file:
-            data = json.load(file)
-            self.emoji = data["emoji_list"]
 
     # commands
     @commands.command()
@@ -48,7 +45,14 @@ class FunnyCommands(commands.Cog):
     @commands.command()
     async def rua(self, ctx):
         log.info(f'{ctx.author} 在叫你')
-        await ctx.send(f'{ctx.author.mention} 多...摸摸我一點汪.. {self.emoji["tc_is_husky"]}')
+        await ctx.send(f'{ctx.author.mention} 多...摸摸我一點汪.. {emoji_list["tc_is_husky"]}')
+
+    # commands
+    @commands.command()
+    async def 早安(self, ctx):
+        log.info(f'{ctx.author} 在叫你')
+        await ctx.send(f'{ctx.author.mention} 早安早安汪 {emoji_list["tc_is_husky"]}')
+
 
     # commands
     @commands.command()
@@ -57,13 +61,13 @@ class FunnyCommands(commands.Cog):
         loveFood = ['香菜','布丁','咖喱']
         log.info(f'{ctx.author} 打算喂你吃 {food}')
         if (food == ""):
-            await ctx.send(f'{ctx.author.mention} 想喂小徹什麽? {self.emoji["tc_tongue"]}')
+            await ctx.send(f'{ctx.author.mention} 想喂小徹什麽? {emoji_list["tc_tongue"]}')
         elif (food in hateFood):
-            await ctx.send(f'小徹拒絕了 {ctx.author.mention} 用 {food} 喂食 {self.emoji["tc_angry"]}')
+            await ctx.send(f'小徹拒絕了 {ctx.author.mention} 用 {food} 喂食 {emoji_list["tc_angry"]}')
         elif(food in loveFood):
-            await ctx.send(f'小徹接受了 {ctx.author.mention} 用 {food} 喂食 {self.emoji["tc_happy"]}')
+            await ctx.send(f'小徹接受了 {ctx.author.mention} 用 {food} 喂食 {emoji_list["tc_happy"]}')
         else:
-            await ctx.send(f'原來 {ctx.author.mention} 喜歡吃 {food} {self.emoji["tc_is_husky"]}')
+            await ctx.send(f'原來 {ctx.author.mention} 喜歡吃 {food} {emoji_list["tc_is_husky"]}')
             
 # 要用 async await 
 async def setup(bot):

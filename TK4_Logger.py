@@ -3,7 +3,7 @@ import time
 import logging as log
 
 def TK4_logger():
-    log_dir = os.getcwd() + '/LogFiles/'
+    log_dir = os.getcwd() + '/logs/'
     # log_path = os.getcwd() + os.sep + log_dir
     folder = os.path.exists(log_dir)
     if not folder:

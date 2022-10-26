@@ -1,32 +1,41 @@
-from discord.ext import tasks, commands
-from twitchAPI.twitch import Twitch
-from discord.utils import get
 import discord
 import json
 import requests
 import time
 import logging as log
+from discord.ext import tasks, commands
+from twitchAPI.twitch import Twitch
+from discord.utils import get
+from src.Id_collection import channle_id, emoji_list, role_list
+from dotenv import dotenv_values
+
+config = dotenv_values(".env")
+TWITCH_APP_ID = config.get("TWITCH_APP_ID")
+TWITCH_APP_SECRET = config.get("TWITCH_APP_SECRET")
+CHANNLE_ID_NOTIFICATION = channle_id['TK4開發測試頻道']
+ROLE_NOTIFIACTION = role_list['優質圖奇觀眾']
+EMOJI_TC_HAPPY = emoji_list['tc_happy']
 
 class StreamingNotifaction(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.last_started_at = '2022-10-12T02:38:03Z'
 
-        with open('token.json', "r", encoding = "utf8") as file:
-            data = json.load(file)
-            APP_ID = data['TWITCH_APP_ID']
-            APP_SECRET = data['TWITCH_APP_SECRET']
-            # self.DISCORD_BOT_TOKEN = data['DISCORD_BOT_TOKEN']
+        # with open('token.json', "r", encoding = "utf8") as file:
+        #     data = json.load(file)
+        #     APP_ID = data['TWITCH_APP_ID']
+        #     APP_SECRET = data['TWITCH_APP_SECRET']
+        #     self.DISCORD_BOT_TOKEN = data['DISCORD_BOT_TOKEN']
 
-        with open('data.json', "r", encoding = "utf8") as file:
-            data = json.load(file)
-            self.my_channel_ID = data['TK4開發測試頻道']
-            self.role_twitch = data['role_list']['優質圖奇觀眾']
-            self.emoji_tc_happy = data['emoji_list']['tc_happy']
+        # with open('data.json', "r", encoding = "utf8") as file:
+        #     data = json.load(file)
+        #     self.my_channel_ID = data['TK4開發測試頻道']
+        #     self.role_twitch = data['role_list']['優質圖奇觀眾']
+        #     self.emoji_tc_happy = data['emoji_list']['tc_happy']
 
         body = {
-            'client_id': APP_ID,
-            'client_secret': APP_SECRET,
+            'client_id': TWITCH_APP_ID,
+            'client_secret': TWITCH_APP_SECRET,
             "grant_type": 'client_credentials'
         }
 
@@ -35,11 +44,11 @@ class StreamingNotifaction(commands.Cog):
         # print(f'key= {keys}')
 
         # Authentication with Twitch API.
-        twitch = Twitch(APP_ID, APP_SECRET)
+        twitch = Twitch(TWITCH_APP_ID, TWITCH_APP_SECRET)
         twitch.authenticate_app([])
         
         self.API_HEADERS = {
-            'Client-ID': APP_ID,
+            'Client-ID': TWITCH_APP_ID,
             'Accept': 'application/vnd.twitchtv.v5+json',
             'Authorization': 'Bearer ' + keys['access_token']
         }
@@ -73,7 +82,7 @@ class StreamingNotifaction(commands.Cog):
         @tasks.loop(seconds=10)
         async def live_notifs_loop():
             guild = self.bot.get_guild(1028268840112640100)
-            role = guild.get_role(int(self.role_twitch))
+            role = guild.get_role(ROLE_NOTIFIACTION)
             
             twitch_name = 'williamhuang0520'
 
@@ -85,8 +94,8 @@ class StreamingNotifaction(commands.Cog):
                 if current_start_time != self.last_started_at:
                     self.last_started_at = current_start_time
                     embed = await self.embed_notification(response)
-                    channel = self.bot.get_channel(int(self.my_channel_ID))
-                    await channel.send(content=f"{role.mention} 小徹開台啦! 快來跟小徹一起玩吧{self.emoji_tc_happy}", embed=embed)
+                    channel = self.bot.get_channel(CHANNLE_ID_NOTIFICATION)
+                    await channel.send(content=f"{role.mention} 小徹開台啦! 快來跟小徹一起玩吧{EMOJI_TC_HAPPY}", embed=embed)
                     log.info(f"{twitch_name} started streaming. Sending a notification.")
 
         live_notifs_loop.start()

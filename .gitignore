@@ -6,3 +6,5 @@ log.txt
 script.py
 users.json
 twitch_test.py
+venv/
+logs/
