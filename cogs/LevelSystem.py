@@ -2,13 +2,13 @@ from discord.ext import commands
 import discord
 import json
 import logging as log
+from src.Id_collection import channle_id
+
+CHANNLE_ID_LEVEL = channle_id["等級測試"]
 
 class LevelSystem(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
-        with open('data.json', "r", encoding = "utf8") as file:
-            self.data = json.load(file)
 
     async def update_data(self, users, user):
         user_id = str(user.id)
@@ -56,7 +56,7 @@ class LevelSystem(commands.Cog):
         with open('users.json', "r", encoding = "utf8") as f:
             users = json.load(f)
         
-        channel = self.bot.get_channel(int(self.data["等級測試"]))
+        channel = self.bot.get_channel(CHANNLE_ID_LEVEL)
         await self.update_data(users, message.author)
         await self.add_experience(users, message.author, 5)
         await self.level_up(users, message.author, channel)

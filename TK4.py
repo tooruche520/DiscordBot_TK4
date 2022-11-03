@@ -61,8 +61,11 @@ async def main():
         await load_extensions()
         await bot.start(DISCORD_BOT_TOKEN)
 
+
 try:
     asyncio.run(main())
+except KeyboardInterrupt:
+    log.error(f'Bot ended: KeyboardInterrupt')
 except Exception as e:
     log.error(f'Bot ended: {e.message}')
 

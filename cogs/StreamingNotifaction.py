@@ -84,7 +84,7 @@ class StreamingNotifaction(commands.Cog):
             guild = self.bot.get_guild(1028268840112640100)
             role = guild.get_role(ROLE_NOTIFIACTION)
             
-            twitch_name = 'williamhuang0520'
+            twitch_name = 'tooruche520'
 
             status, response = self.checkuser(twitch_name)
 
@@ -109,7 +109,7 @@ class StreamingNotifaction(commands.Cog):
         viewer_count = response["data"][0]['viewer_count']
         
         user_profile_image = ""
-        url = "https://api.twitch.tv/helix/users?login=williamhuang0520"
+        url = "https://api.twitch.tv/helix/users?login=tooruche520"
         try:
             jsondata = requests.Session().get(url, headers=self.API_HEADERS).json()
             user_profile_image = jsondata["data"][0]['profile_image_url']
