@@ -120,10 +120,10 @@ class StreamingNotifaction(commands.Cog):
         game_name = ""
         url = "https://api.twitch.tv/helix/games?{}"
         url = url.format(f"id={game_id}")
-        print(url)
+        # print(url)
         try:
             jsondata = requests.Session().get(url, headers=self.API_HEADERS).json() 
-            print(jsondata)
+            # print(jsondata)
             game_name = jsondata["data"][0]['name'] 
         except Exception as e:
             log.warning("Could not get user information")
