@@ -70,7 +70,7 @@ TK4-bot 是一個 Discord Bot，除了繼承 TK4 的所有特性及可愛，還�
 目前 TK4-bot ver. 是由以下成員一起共同開發：
 
 * [晴海徹](https://twitter.com/tooruche)
-* [阿循](https://twitter.com/FrankGan0402)
+* [阿循](https://twitter.com/axun0402)
 * [機器狼](https://twitter.com/V_KMN_BOT)
 
 若想一起共同為 TK4-bot 進一份心力，歡迎加入 [漏電攝影棚][1] 並私訊小徹。 
