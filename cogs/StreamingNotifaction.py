@@ -21,18 +21,6 @@ class StreamingNotifaction(commands.Cog):
         self.bot = bot
         self.last_started_at = '2022-10-12T02:38:03Z'
 
-        # with open('token.json', "r", encoding = "utf8") as file:
-        #     data = json.load(file)
-        #     APP_ID = data['TWITCH_APP_ID']
-        #     APP_SECRET = data['TWITCH_APP_SECRET']
-        #     self.DISCORD_BOT_TOKEN = data['DISCORD_BOT_TOKEN']
-
-        # with open('data.json', "r", encoding = "utf8") as file:
-        #     data = json.load(file)
-        #     self.my_channel_ID = data['TK4開發測試頻道']
-        #     self.role_twitch = data['role_list']['優質圖奇觀眾']
-        #     self.emoji_tc_happy = data['emoji_list']['tc_happy']
-
         body = {
             'client_id': TWITCH_APP_ID,
             'client_secret': TWITCH_APP_SECRET,
