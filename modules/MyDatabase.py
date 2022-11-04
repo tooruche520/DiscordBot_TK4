@@ -18,18 +18,18 @@ def add_user(user):
     adoption = user.adoption
     level = 0
     experience = 0
-    value = f"VALUES('{user_id}', '{adoption}', {level}, {experience});"
-    cursor.execute(command+value)
+    command += f"VALUES('{user_id}', '{adoption}', {level}, {experience});"
+    cursor.execute(command)
 
 # TODO
 def edit_user(user):
-    command = "INSERT INTO user_exp(user_id, adoption, level, experience) "
+    command = "UPDATE user_exp "
     user_id = user.user_id
     adoption = user.adoption
     level = user.level
     experience = user.experience
-    value = f"VALUES('{user_id}', '{adoption}', {level}, {experience});"
-    cursor.execute(command+value)
+    command += f"SET level='{level}' experience={experience});"
+    cursor.execute(command)
 
 # TODO
 def delete_user(user):
