@@ -3,6 +3,9 @@ import discord
 import json
 import logging as log
 from src.Id_collection import channle_id
+import modules.MyDatabase as db
+# import modules.User as User
+from modules.User import User
 
 CHANNLE_ID_LEVEL = channle_id["等級測試"]
 
@@ -10,72 +13,43 @@ class LevelSystem(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    async def update_data(self, users, user):
-        user_id = str(user.id)
-        # print(user.id)
-        # print(users)
-        # print(str(user.id) in users)
-        if not str(user.id) in users:
-            users[user_id] = {}
-            users[user_id]['experience'] = 0
-            users[user_id]['level'] = 1
-            log.info(f'加入使用者{user}')
+    async def level_up(self, is_upgrade, user):
+        if(is_upgrade):
+            channel = self.bot.get_channel(CHANNLE_ID_LEVEL)
+            user_data = db.get_user_by_userid(user.id)
+            level = user_data.level
+            await channel.send(f'{user.mention} 升到了第{level}等')
+        return
 
-    async def add_experience(self, users, user, exp):
-        user_id = str(user.id)
-        users[user_id]['experience'] += exp
-        log.info(f'增加 {user} {exp} 經驗值')
+    @commands.Cog.listener()
+    async def on_ready(self):
+        for guild in self.bot.guilds:
+            for member in guild.members:
+                db.add_user(User(member.id))
+        log.info(f"Successfully add all user from Server")
 
-    async def level_up(self, users, user, channel):
-        user_id = str(user.id)
-        experience = users[user_id]['experience']
-        lvl_start = users[user_id]['level']
-        lvl_end = int(experience ** (1/4))
-        
-        if lvl_start < lvl_end:
-            users[user_id]['level'] = lvl_end
-            log.info(f'{user.mention} 升到了第{lvl_end}等')
-            await channel.send(f'{user.mention} 升到了第{lvl_end}等')
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
-        with open('users.json', "r", encoding = "utf8") as f:
-            users = json.load(f)
-            log.info("讀入users.json")
-        
-        await self.update_data(users, member)
-        
-        with open('users.json', "w", encoding = "utf8") as f:
-            json.dump(users, f)
+        user_id = member.id
+        user_adoption = User.Adoption.VIP
+        db.add_user(User(user_id, user_adoption))
 
     @commands.Cog.listener()
     async def on_message(self, message):
         if message.author == self.bot.user:
             return
 
-        with open('users.json', "r", encoding = "utf8") as f:
-            users = json.load(f)
+        await self.level_up(db.update_user_exp(message.author.id, 2), message.author)
         
-        channel = self.bot.get_channel(CHANNLE_ID_LEVEL)
-        await self.update_data(users, message.author)
-        await self.add_experience(users, message.author, 5)
-        await self.level_up(users, message.author, channel)
-        
-        with open('users.json', "w", encoding = "utf8") as f:
-            json.dump(users, f)
-
 
     @commands.command()
     async def level(self, ctx):
-        try:
-            with open('users.json', "r", encoding = "utf8") as f:
-                users = json.load(f)
-                user_id = str(ctx.author.id) 
-                experience = users[user_id]['experience']
-                level = users[user_id]['level']
-                await ctx.send(f'{ctx.author.mention} 目前是等級{level}，累積了{experience}經驗值!!')
-        except Exception as e:
-            log.info("Error loading users.json") 
+        user_data = db.get_user_by_userid(ctx.author.id)
+        level = user_data.level
+        experience = user_data.experience
+        await ctx.send(f'{ctx.author.mention} 目前是等級{level}，累積了{experience}經驗值!!')
+
 
 # 要用 async await 
 async def setup(bot):
