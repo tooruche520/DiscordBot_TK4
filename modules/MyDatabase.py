@@ -2,6 +2,8 @@ import sqlite3
 import logging as log
 import modules.User as User
 import csv
+import asyncio
+# from cogs.LevelSystem import send_level_up_message
 
 # from modules.TK4_Logger import TK4_logger
 # TK4_logger()
@@ -30,7 +32,7 @@ def add_user(user):
         return
 
     adoption = user.adoption
-    level = 0
+    level = 1
     experience = 0
     
     command = "INSERT INTO user_exp(user_id, adoption, level, experience) "
@@ -49,8 +51,8 @@ def update_user_exp(user_id, add_exp):
     experience = user.experience + add_exp
     level = user.level
     is_upgrade = False
-    if(level != 50):
-        if(experience >= int(table_level_exp[level+2][1])):
+    if(level != 51):
+        if(experience >= int(table_level_exp[level+1][1])):
             level += 1
             is_upgrade = True
 
