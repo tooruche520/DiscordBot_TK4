@@ -31,6 +31,8 @@ class FunnyCommands(commands.Cog):
     async def 晚安(self, ctx):
         log.info(f'{ctx.author} 去睡覺了')
         await ctx.send(f'{ctx.author.mention} 晚安晚安汪(*´∀`)~♥')
+        await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, 10), ctx.author)
+
 
     # commands
     @commands.command()
@@ -49,12 +51,16 @@ class FunnyCommands(commands.Cog):
     async def rua(self, ctx):
         log.info(f'{ctx.author} 在叫你')
         await ctx.send(f'{ctx.author.mention} 多...摸摸我一點汪.. {emoji_list["tc_is_husky"]}')
+        await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, 10), ctx.author)
+
 
     # commands
     @commands.command()
     async def 早安(self, ctx):
         log.info(f'{ctx.author} 在叫你')
         await ctx.send(f'{ctx.author.mention} 早安早安汪 {emoji_list["tc_is_husky"]}')
+        await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, 10), ctx.author)
+
 
 
     # commands
@@ -69,6 +75,7 @@ class FunnyCommands(commands.Cog):
             await ctx.send(f'小徹拒絕了 {ctx.author.mention} 用 {food} 喂食 {emoji_list["tc_angry"]}')
         elif(food in loveFood):
             await ctx.send(f'小徹接受了 {ctx.author.mention} 用 {food} 喂食 {emoji_list["tc_happy"]}')
+            await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, 10), ctx.author)
         else:
             await ctx.send(f'原來 {ctx.author.mention} 喜歡吃 {food} {emoji_list["tc_is_husky"]}')
             

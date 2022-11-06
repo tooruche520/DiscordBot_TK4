@@ -2,7 +2,7 @@ import sqlite3
 import logging as log
 import modules.User as User
 import csv
-import asyncio
+from modules.LimitCounter import get_limit_count, add_count
 # from cogs.LevelSystem import send_level_up_message
 
 # from modules.TK4_Logger import TK4_logger
@@ -42,6 +42,11 @@ def add_user(user):
     log.debug(f"Successfully add user to database.")
 
 def update_user_exp(user_id, add_exp):
+    if(get_limit_count(user_id) >= 5):
+        log.info(f"Command limit.")
+        return False
+
+    add_count(user_id)
     command = "UPDATE user_exp "
     user = get_user_by_userid(user_id)
     if(user == None):
@@ -60,7 +65,7 @@ def update_user_exp(user_id, add_exp):
     # print(command)
     cursor.execute(command)
     connect.commit()
-    log.debug(f"Successfully update user exp to database.")
+    log.info(f"Successfully update user exp to database.")
     return is_upgrade
 
 ##TODO
