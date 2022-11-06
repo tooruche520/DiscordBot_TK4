@@ -2,7 +2,9 @@ from discord.ext import commands
 import discord
 import json
 import logging as log
+import modules.MyDatabase as db
 from src.Id_collection import channle_id, emoji_list
+from cogs.LevelSystem import LevelSystem
 
 # | 指令       | 描述                    | 經驗值             | 備註                    |
 # | ---------- | ----------------------- | ------------------ | ----------------------- |
@@ -22,6 +24,7 @@ class FunnyCommands(commands.Cog):
     async def 棒棒糖(self, ctx):
         log.info(f'{ctx.author} 給了TK4一根棒棒糖')
         await ctx.send(f'謝謝 {ctx.author.mention} 的棒棒糖')
+        await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, 10), ctx.author)
 
     # commands
     @commands.command()

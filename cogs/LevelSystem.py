@@ -13,7 +13,7 @@ class LevelSystem(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    async def level_up(self, is_upgrade, user):
+    async def send_level_up_message(self, is_upgrade, user):
         if(is_upgrade):
             channel = self.bot.get_channel(CHANNLE_ID_LEVEL)
             user_data = db.get_user_by_userid(user.id)
@@ -39,8 +39,11 @@ class LevelSystem(commands.Cog):
     async def on_message(self, message):
         if message.author == self.bot.user:
             return
+            
+        if message.content[0] == '!':
+            return
 
-        await self.level_up(db.update_user_exp(message.author.id, 2), message.author)
+        await self.send_level_up_message(db.update_user_exp(message.author.id, 2), message.author)
         
 
     @commands.command()
@@ -54,3 +57,4 @@ class LevelSystem(commands.Cog):
 # 要用 async await 
 async def setup(bot):
     await bot.add_cog(LevelSystem(bot))
+
