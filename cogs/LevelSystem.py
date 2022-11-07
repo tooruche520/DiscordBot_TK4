@@ -38,7 +38,7 @@ class LevelSystem(commands.Cog):
     @commands.Cog.listener()
     async def on_member_join(self, member):
         user_id = member.id
-        user_adoption = User.Adoption.VIP
+        user_adoption = User.Adoption.GENERAL
         db.add_user(User(user_id, user_adoption))
 
     @commands.Cog.listener()

@@ -9,26 +9,27 @@ class DebugCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    def is_developer(self, ctx):
-        # print(ctx.author.roles, ROLE_DEVELOPER)
-        # print([role for role in ctx.author.roles])
-        return ROLE_DEVELOPER in [role.id for role in ctx.author.roles]
+    async def is_developer(self, ctx):
+        if(ROLE_DEVELOPER not in [role.id for role in ctx.author.roles]):
+            await ctx.send(f"You don't have permission use this command.")
+            log.warning(f'{ctx.author} want to use dev command.')
+            return False
+        return True
 
-    # commands
+    # Reload one Cog you specified. 
     @commands.command()
     async def reload(self, ctx, extension):
-        if(not self.is_developer(ctx)):
-            await ctx.send(f"You don't have permission use this command.")
+        if(not await self.is_developer(ctx)):
             return
 
         await self.bot.reload_extension(f"cogs.{extension}")
         log.info(f"Completed reloading {extension}")
         await ctx.send(f"reloaded {extension}")
 
+    # Reload all Cog in project. 
     @commands.command()
     async def reload_all(self, ctx):
-        if(not self.is_developer(ctx)):
-            await ctx.send(f"You don't have permission use this command.")
+        if(not await self.is_developer(ctx)):
             return
         
         for filename in os.listdir("./cogs"):
@@ -37,6 +38,25 @@ class DebugCommand(commands.Cog):
         log.info(f"Completed reloading all extensions.")
         await ctx.send(f"reloaded all")
 
+    # Delete the last {limit} messages.
+    @commands.command()
+    async def delete_all(self, ctx, limit):
+        if(not await self.is_developer(ctx)):
+            return
+
+        async for message in ctx.channel.history(limit=int(limit)):
+            await message.delete()
+            # log.info(f"deleted message {message.content}")
+        log.info(f"completed deleted {limit} messages")
+
+    # Shutdown bot by command.
+    @commands.command()
+    async def shutdown(self, ctx):
+        if(not await self.is_developer(ctx)):
+            return
+        log.info(f'Bot ended: command')
+        await self.bot.close()
+        
 
 
 # 要用 async await 
