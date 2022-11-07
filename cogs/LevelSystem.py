@@ -9,7 +9,7 @@ import modules.LimitCounter as LimitCounter
 from modules.User import User
 
 
-CHANNLE_ID_LEVEL = channle_id["等級測試"]
+CHANNLE_ID_LEVEL = channle_id["升等通知"]
 
 class LevelSystem(commands.Cog):
     def __init__(self, bot):

@@ -1,11 +1,9 @@
-from discord.ext import commands 
-import discord
-import json
+from discord.ext import commands
 import logging as log
 from src.Id_collection import channle_id, emoji_list
 
-CHANNLE_ID_WELCOME = channle_id["TK4開發測試頻道"]
-CHANNLE_ID_GET_ROLES = channle_id["領取身分組頻道"]
+CHANNLE_ID_WELCOME = channle_id["歡迎入口"]
+CHANNLE_ID_GET_ROLES = channle_id["領取身分組"]
 
 class Grettings(commands.Cog):
     def __init__(self, bot):

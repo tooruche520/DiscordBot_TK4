@@ -18,12 +18,11 @@ def add_count(user_id):
         if user_id not in data:
             data[user_id] = 0
         data[user_id] += 1
-        print(2)
 
     with open('src/command_count.json', "w", encoding = "utf8") as file:
         json.dump(data, file)
 
-    log.info(f'Successfully add count')
+    # log.info(f'Successfully add count')
 
 def clear():
     with open('src/command_count.json', "r", encoding = "utf8") as file:

@@ -10,7 +10,7 @@ import logging as log
 from src.Id_collection import channle_id, message_id, emoji_list, role_list
 
 
-CHANNLE_ID_GET_ROLES = channle_id['TK4開發測試頻道']
+CHANNLE_ID_GET_ROLES = channle_id['領取身分組']
 MESSAGE_ID_GET_ROLES = message_id['領取身分組訊息']
 
 class ReactionRole(commands.Cog):
