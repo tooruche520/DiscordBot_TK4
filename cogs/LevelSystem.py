@@ -1,13 +1,15 @@
-from discord.ext import commands 
+from discord.ext import tasks, commands 
 import discord
 import json
 import logging as log
 from src.Id_collection import channle_id
 import modules.MyDatabase as db
+import modules.LimitCounter as LimitCounter
 # import modules.User as User
 from modules.User import User
 
-CHANNLE_ID_LEVEL = channle_id["等級測試"]
+
+CHANNLE_ID_LEVEL = channle_id["升等通知"]
 
 class LevelSystem(commands.Cog):
     def __init__(self, bot):
@@ -28,11 +30,15 @@ class LevelSystem(commands.Cog):
                 db.add_user(User(member.id))
         log.info(f"Successfully add all user from Server")
 
+        @tasks.loop(hours=1)
+        async def clear_task():
+            LimitCounter.clear()
+        clear_task.start()
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
         user_id = member.id
-        user_adoption = User.Adoption.VIP
+        user_adoption = User.Adoption.GENERAL
         db.add_user(User(user_id, user_adoption))
 
     @commands.Cog.listener()

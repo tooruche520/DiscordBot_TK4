@@ -1,6 +1,5 @@
 from discord.ext import tasks, commands
 import discord
-import json
 import os
 import asyncio
 import time
@@ -21,20 +20,20 @@ DISCORD_BOT_TOKEN = config.get("DISCORD_BOT_TOKEN")
 async def on_ready():
     log.info("Bot in ready")
 
-@bot.command()
-async def reload(ctx, extension):
-    await bot.reload_extension(f"cogs.{extension}")
-    log.info(f"Completed reloading {extension}")
-    await ctx.send(f"reloaded {extension}")
+# @bot.command()
+# async def reload(ctx, extension):
+#     await bot.reload_extension(f"cogs.{extension}")
+#     log.info(f"Completed reloading {extension}")
+#     await ctx.send(f"reloaded {extension}")
 
-@bot.command()
-async def reload_all(ctx):
-    for filename in os.listdir("./cogs"):
-        if filename.endswith(".py"):
-            await bot.reload_extension(f"cogs.{filename[:-3]}")
-    log.info(f"Completed reloading all extensions.")
-    await ctx.send(f"reloaded all")
-    # await bot.reload_extension(f"cogs.{extension}")
+# @bot.command()
+# async def reload_all(ctx):
+#     for filename in os.listdir("./cogs"):
+#         if filename.endswith(".py"):
+#             await bot.reload_extension(f"cogs.{filename[:-3]}")
+#     log.info(f"Completed reloading all extensions.")
+#     await ctx.send(f"reloaded all")
+#     # await bot.reload_extension(f"cogs.{extension}")
 
 # 臨時用
 # @bot.command()

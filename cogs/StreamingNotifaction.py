@@ -1,5 +1,4 @@
 import discord
-import json
 import requests
 import time
 import logging as log
@@ -12,7 +11,7 @@ from dotenv import dotenv_values
 config = dotenv_values(".env")
 TWITCH_APP_ID = config.get("TWITCH_APP_ID")
 TWITCH_APP_SECRET = config.get("TWITCH_APP_SECRET")
-CHANNLE_ID_NOTIFICATION = channle_id['TK4開發測試頻道']
+CHANNLE_ID_NOTIFICATION = channle_id['開台通知']
 ROLE_NOTIFIACTION = role_list['優質圖奇觀眾']
 EMOJI_TC_HAPPY = emoji_list['tc_happy']
 
