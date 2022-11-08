@@ -75,6 +75,17 @@ TK4-bot 是一個 Discord Bot，除了繼承 TK4 的所有特性及可愛，還�
 
 若想一起共同為 TK4-bot 進一份心力，歡迎加入 [漏電攝影棚][1] 並私訊小徹。 
 
+# 開發里程碑
+🎉 2022.10.10 | 建立 repo 提交第一支程式
+
+🎉 2022.10.11 | 阿循加入開發計畫
+
+🎉 2022.10.12 | 機器狼加入開發計畫
+
+🎉 2022.11.07 | 樹莓派環境建構完成
+
+🎉 2022.11.XX | TK4-bot 1.0 beta版 發行
+
 
 [1]: https://discord.gg/HeywMdKNf5
 [7]: https://raw.githubusercontent.com/python-discord/branding/main/logos/badge/badge_github.svg
