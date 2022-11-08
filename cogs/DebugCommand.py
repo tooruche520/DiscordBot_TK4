@@ -11,7 +11,7 @@ class DebugCommand(commands.Cog):
         self.bot = bot
 
     async def is_developer(self, ctx):
-        if type(ctx.author) == type(User):
+        if isinstance(ctx.author, User):
             await ctx.send(f"You are in the private channel.")
             return False
 
