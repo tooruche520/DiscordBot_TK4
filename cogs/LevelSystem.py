@@ -45,9 +45,12 @@ class LevelSystem(commands.Cog):
     async def on_message(self, message):
         if message.author == self.bot.user:
             return
-            
-        if message.content[0] == '!':
-            return
+        
+        try:
+            if message.content[0] == '!':
+                return
+        except IndexError:
+            log.info('This message no content')
 
         await self.send_level_up_message(db.update_user_exp(message.author.id, 2), message.author)
         

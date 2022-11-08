@@ -1,4 +1,5 @@
 from discord.ext import commands 
+from discord.abc import User
 import os
 import logging as log
 from src.Id_collection import role_list
@@ -10,6 +11,10 @@ class DebugCommand(commands.Cog):
         self.bot = bot
 
     async def is_developer(self, ctx):
+        if type(ctx.author) == type(User):
+            await ctx.send(f"You are in the private channel.")
+            return False
+
         if(ROLE_DEVELOPER not in [role.id for role in ctx.author.roles]):
             await ctx.send(f"You don't have permission use this command.")
             log.warning(f'{ctx.author} want to use dev command.')
