@@ -1,62 +1,71 @@
-from discord.ext import commands 
+from discord.ext import tasks, commands
 import discord
-import json
 import os
 import asyncio
+import time
+from modules.TK4_Logger import TK4_logger
 import logging as log
+from dotenv import dotenv_values
 
-intents=discord.Intents.all()
+
+intents = discord.Intents.all()
 client = discord.Client(intents=intents)
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-logger = log.getLogger()
-logger.setLevel(log.INFO)
-formatter = log.Formatter(fmt='[%(asctime)s] [%(levelname)s] [%(module)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
-
-ch = log.StreamHandler()
-ch.setFormatter(formatter)
-
-log_filename = 'log.txt'
-fh = log.FileHandler(log_filename, encoding='utf-8')
-fh.setFormatter(formatter)
-
-logger.addHandler(ch)
-logger.addHandler(fh)
-
-with open('token.json', "r", encoding = "utf8") as file:
-    data = json.load(file)
-    token = data['DISCORD_BOT_TOKEN']
+TK4_logger()
+config = dotenv_values(".env")
+DISCORD_BOT_TOKEN = config.get("DISCORD_BOT_TOKEN")
 
 @bot.event
 async def on_ready():
-    print("Bot in ready")
     log.info("Bot in ready")
 
-@bot.command()
-async def reload(ctx, extension):
-    log.info(f"reloading {extension}")
-    await bot.reload_extension(f"cogs.{extension}")
-    await ctx.send(f"reloaded {extension}")
+# @bot.command()
+# async def reload(ctx, extension):
+#     await bot.reload_extension(f"cogs.{extension}")
+#     log.info(f"Completed reloading {extension}")
+#     await ctx.send(f"reloaded {extension}")
 
-@bot.command()
-async def reload_all(ctx):
-    print(f"reloading all extensions...")
-    for filename in os.listdir("./cogs"):
-        if filename.endswith(".py"):
-            await bot.reload_extension(f"cogs.{filename[:-3]}")
-    await ctx.send(f"reloaded all")
-    # await bot.reload_extension(f"cogs.{extension}")
+# @bot.command()
+# async def reload_all(ctx):
+#     for filename in os.listdir("./cogs"):
+#         if filename.endswith(".py"):
+#             await bot.reload_extension(f"cogs.{filename[:-3]}")
+#     log.info(f"Completed reloading all extensions.")
+#     await ctx.send(f"reloaded all")
+#     # await bot.reload_extension(f"cogs.{extension}")
+
+# 臨時用
+# @bot.command()
+# async def delete(ctx, limit):
+#     async for message in ctx.channel.history(limit=int(limit)):
+#         if message.author == bot.user and '升到了第' in message.content:
+#             await message.delete()
+#             log.info(f"deleted message {message.content}")
+#         else:
+#             log.info(f"no delete message {message.content}")
+#     log.info(f"completed deleted message")
+        
 
 async def load_extensions():
-    for filename in os.listdir("./cogs"):
-        if filename.endswith(".py"):
-            await bot.load_extension(f"cogs.{filename[:-3]}")
+    try:
+        for filename in os.listdir("./cogs"):
+            if filename.endswith(".py"):
+                await bot.load_extension(f"cogs.{filename[:-3]}")
+    except Exception as e:
+        log.error(e)
 
 async def main():
     async with bot:
         await load_extensions()
-        await bot.start(token)
+        await bot.start(DISCORD_BOT_TOKEN)
 
-asyncio.run(main())
 
-bot.run(token) 
+try:
+    asyncio.run(main())
+except KeyboardInterrupt:
+    log.error(f'Bot ended: KeyboardInterrupt')
+except Exception as e:
+    log.error(f'Bot ended: {e.message}')
+
+

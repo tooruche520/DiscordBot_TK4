@@ -3,3 +3,10 @@ token.json
 *.pyc
 test.py
 log.txt
+script.py
+users.json
+twitch_test.py
+bot-venv/
+venv/
+logs/
+.env
