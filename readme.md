@@ -67,7 +67,7 @@ TK4-bot 是一個 Discord Bot，除了繼承 TK4 的所有特性及可愛，還�
 
 
 # 計畫開發成員
-目前 TK4-bot ver. 是由以下成員一起共同開發：
+目前 TK4-bot 是由以下成員一起共同開發：
 
 * [晴海徹](https://twitter.com/tooruche)
 * [阿循](https://twitter.com/axun0402)
@@ -84,7 +84,7 @@ TK4-bot 是一個 Discord Bot，除了繼承 TK4 的所有特性及可愛，還�
 
 🎉 2022.11.07 | 樹莓派環境建構完成
 
-🎉 2022.11.XX | TK4-bot 1.0 beta版 發行
+🎉 2022.11.09 | TK4-bot 1.0 beta版 發行
 
 
 [1]: https://discord.gg/HeywMdKNf5
