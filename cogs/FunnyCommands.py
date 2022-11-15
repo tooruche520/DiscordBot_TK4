@@ -16,6 +16,8 @@ from modules.LimitCounter import add_count
 # | 以下待加入 | ----------------------- | ------------------ | ----------------------- |
 # | !rua       | 摸摸TK4 uwu             | 增加 {N}           |                         |
 
+CHANNLE_ID_LEVEL = channle_id["升等通知"]
+
 class FunnyCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -26,7 +28,7 @@ class FunnyCommands(commands.Cog):
         log.info(f'{ctx.author} 給了TK4一根棒棒糖')
         await ctx.send(f'謝謝 {ctx.author.mention} 的棒棒糖')
         await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, 10), ctx.author)
-        add_count(ctx.author.id)
+        # add_count(ctx.author.id)
 
     # commands
     @commands.command()
@@ -34,7 +36,7 @@ class FunnyCommands(commands.Cog):
         log.info(f'{ctx.author} 去睡覺了')
         await ctx.send(f'{ctx.author.mention} 晚安晚安汪(*´∀`)~♥')
         await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, 10), ctx.author)
-        add_count(ctx.author.id)
+        # add_count(ctx.author.id)
 
     # commands
     @commands.command()
@@ -54,7 +56,7 @@ class FunnyCommands(commands.Cog):
         log.info(f'{ctx.author} 在叫你')
         await ctx.send(f'{ctx.author.mention} 多...摸摸我一點汪.. {emoji_list["tc_is_husky"]}')
         await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, 10), ctx.author)
-        add_count(ctx.author.id)
+        # add_count(ctx.author.id)
 
 
     # commands
@@ -63,12 +65,14 @@ class FunnyCommands(commands.Cog):
         log.info(f'{ctx.author} 在叫你')
         await ctx.send(f'{ctx.author.mention} 早安早安汪 {emoji_list["tc_is_husky"]}')
         await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, 10), ctx.author)
-        add_count(ctx.author.id)
+        # add_count(ctx.author.id)
 
 
     # commands
     @commands.command()
-    async def 吃(self, ctx, food=""):
+    async def 吃(self, ctx, food):
+        print(food)
+        food=""
         try:
             hateFood = ['多益','茄子','青椒']
             loveFood = ['香菜','布丁','咖喱']
@@ -92,9 +96,14 @@ class FunnyCommands(commands.Cog):
         if message.author == self.bot.user:
             return
         
-        print(message.content)
-        # if self.bot.mention in message.content:
-        #     await self.bot.send('叫我咪?')
+        # print(message.content)
+        if '<@1028872389385277501>' in message.content:
+            await message.channel.send('叫我咪?')
+            
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx, error):
+        await ctx.send(f'指令錯誤! 請檢查指令之後再次嘗試. \n`Error: {error}`')
+        
  
             
 # 要用 async await 

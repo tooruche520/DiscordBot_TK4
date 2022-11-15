@@ -18,9 +18,11 @@ class Grettings(commands.Cog):
         
         # TODO: [DEBUG] 加入按鈕
         button = Button(label="打個招呼", style=discord.ButtonStyle.green, emoji=emoji_list["tc_happy"])
-        button.callback = lambda interaction: await interaction.channel.send(f'{interaction.user} 跟你說你好', file=discord.File('src/pic/tongue.png'))
+        async def cb(interaction):
+            await interaction.response.send_message(f'{interaction.user.mention} 跟你說你好', file=discord.File('src/pic/tongue.png'))
+        button.callback = cb
         view = View()
-        view.add(button)
+        view.add_item(button)
         
         channel = self.bot.get_channel(CHANNLE_ID_WELCOME)
         Identity = self.bot.get_channel(CHANNLE_ID_GET_ROLES)
