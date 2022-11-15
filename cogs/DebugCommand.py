@@ -10,22 +10,34 @@ class DebugCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    async def is_developer(self, ctx):
-        if isinstance(ctx.author, User):
-            await ctx.send(f"You are in the private channel.")
-            return False
+    # async def is_developer(self, ctx):
+        # TODO: 比較問題
+        # if isinstance(ctx.author, User):
+        #     await ctx.send(f"You are in the private channel.")
+        #     return False
 
-        if(ROLE_DEVELOPER not in [role.id for role in ctx.author.roles]):
-            await ctx.send(f"You don't have permission use this command.")
-            log.warning(f'{ctx.author} want to use dev command.')
-            return False
-        return True
+        # if(ROLE_DEVELOPER not in [role.id for role in ctx.author.roles]):
+        #     await ctx.send(f"You don't have permission use this command.")
+        #     log.warning(f'{ctx.author} want to use dev command.')
+        #     return False
+        # return True
+        
+    # TODO: [DEBUG] 判斷使用者使否具有開發身分組
+    def is_developer():
+        def predicate():
+            try:
+                has_role = commands.has_role(ROLE_DEVELOPER)
+            except Exception as e:
+                print(e)
+            return has_role
+        return predicate
 
     # Reload one Cog you specified. 
     @commands.command()
+    @is_developer()
     async def reload(self, ctx, extension):
-        if(not await self.is_developer(ctx)):
-            return
+        # if(not await self.is_developer(ctx)):
+        #     return
 
         await self.bot.reload_extension(f"cogs.{extension}")
         log.info(f"Completed reloading {extension}")
@@ -34,8 +46,8 @@ class DebugCommand(commands.Cog):
     # Reload all Cog in project. 
     @commands.command()
     async def reload_all(self, ctx):
-        if(not await self.is_developer(ctx)):
-            return
+        # if(not await self.is_developer(ctx)):
+        #     return
         
         for filename in os.listdir("./cogs"):
             if filename.endswith(".py"):
@@ -46,8 +58,8 @@ class DebugCommand(commands.Cog):
     # Delete the last {limit} messages.
     @commands.command()
     async def delete_all(self, ctx, limit):
-        if(not await self.is_developer(ctx)):
-            return
+        # if(not await self.is_developer(ctx)):
+        #     return
 
         async for message in ctx.channel.history(limit=int(limit)):
             await message.delete()

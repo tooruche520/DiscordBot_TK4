@@ -46,7 +46,7 @@ def update_user_exp(user_id, add_exp):
         log.info(f"Command limit.")
         return False
 
-    add_count(user_id)
+    # add_count(user_id)
     command = "UPDATE user_exp "
     user = get_user_by_userid(user_id)
     if(user == None):
