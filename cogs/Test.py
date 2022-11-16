@@ -22,7 +22,7 @@ class Test(commands.Cog):
         async def fun(ctx):
             # log.info(f'{ctx.author} 給了TK4一根棒棒糖')
             await ctx.send(response)
-            # await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, exp), ctx.author)
+            await LevelSystem.send_level_up_message(ctx.bot, db.update_user_exp(ctx.author.id, exp), ctx.author)
         self.bot.add_command(fun)
     
     # commands
