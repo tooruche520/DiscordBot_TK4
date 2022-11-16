@@ -28,7 +28,7 @@ class Test(commands.Cog):
     # commands
     @commands.command()
     async def add_command(self, ctx, name, response):
-        await self.cog_checkadd_my_command(name, response, 10)
+        await self.add_my_command(name, response, 10)
         await ctx.send(f'Add command {name}')
            
 # 要用 async await 
