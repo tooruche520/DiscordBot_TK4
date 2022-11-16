@@ -18,7 +18,7 @@ class Test(commands.Cog):
         self.bot = bot
         
     async def add_my_command(self, name, response, exp):
-        @commands.command(name=name)
+        @commands.command(name=name, pass_context=True)
         async def fun(self, ctx):
             # log.info(f'{ctx.author} 給了TK4一根棒棒糖')
             await ctx.send(response)
