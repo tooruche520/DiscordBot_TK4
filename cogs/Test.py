@@ -18,15 +18,15 @@ class Test(commands.Cog):
         self.bot = bot
         
     async def add_my_command(self, name, response, exp):
-        @commands.command(name=name, pass_context=True)
-        async def fun(self, ctx):
+        @commands.command(name=name)
+        async def fun(ctx):
             # log.info(f'{ctx.author} 給了TK4一根棒棒糖')
             await ctx.send(response)
-            await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, exp), ctx.author)
+            # await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, exp), ctx.author)
         self.bot.add_command(fun)
     
     # commands
-    @commands.command(pass_context=True)
+    @commands.command()
     async def add_command(self, ctx, name, response):
         await self.add_my_command(name, response, 10)
         await ctx.send(f'Add command {name}')
