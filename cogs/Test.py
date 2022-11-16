@@ -26,7 +26,7 @@ class Test(commands.Cog):
         self.bot.add_command(fun)
     
     # commands
-    @commands.command()
+    @commands.command(pass_context=True)
     async def add_command(self, ctx, name, response):
         await self.add_my_command(name, response, 10)
         await ctx.send(f'Add command {name}')
