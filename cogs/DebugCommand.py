@@ -62,7 +62,7 @@ class DebugCommand(commands.Cog):
     async def shutdown(self, ctx):
         if(not await self.is_developer(ctx)):
             return
-        ctx.send(f'休息時間到了咪~\n等等見囉{emoji_list["tc_tongue"]}')
+        await ctx.send(f'休息時間到了咪~\n等等見囉{emoji_list["tc_tongue"]}')
         log.info(f'Bot ended: command')
         await self.bot.close()
         
