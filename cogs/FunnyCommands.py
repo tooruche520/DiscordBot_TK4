@@ -71,8 +71,8 @@ class FunnyCommands(commands.Cog):
     # commands
     @commands.command()
     async def 吃(self, ctx, food):
-        print(food)
-        food=""
+        # print(food)
+        # food=""
         try:
             hateFood = ['多益','茄子','青椒']
             loveFood = ['香菜','布丁','咖喱']
