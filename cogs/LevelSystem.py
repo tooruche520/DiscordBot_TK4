@@ -4,7 +4,7 @@ import json
 import logging as log
 from src.Id_collection import channle_id
 import modules.MyDatabase as db
-import modules.LimitCounter as LimitCounter
+from modules.LimitCounter import clear, sub_count
 # import modules.User as User
 from modules.User import User
 
@@ -32,7 +32,7 @@ class LevelSystem(commands.Cog):
 
         @tasks.loop(hours=1)
         async def clear_task():
-            LimitCounter.clear()
+            clear()
         clear_task.start()
 
     @commands.Cog.listener()
@@ -45,10 +45,14 @@ class LevelSystem(commands.Cog):
     async def on_message(self, message):
         if message.author == self.bot.user:
             return
-            
-        if message.content[0] == '!':
-            return
+        
+        try:
+            if message.content[0] == '!':
+                return
+        except IndexError:
+            log.info('This message no content')
 
+        sub_count(message.author.id)
         await self.send_level_up_message(db.update_user_exp(message.author.id, 2), message.author)
         
 

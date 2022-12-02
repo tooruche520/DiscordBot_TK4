@@ -121,14 +121,14 @@ class StreamingNotifaction(commands.Cog):
         # title = response["data"][0]['']
         # title = response["data"][0]['']
 
-        current_time = time.strftime("%H:%M", time.localtime()) 
+        current_time = time.strftime("%Y/%m/%d %H:%M", time.localtime()) 
 
-        embed=discord.Embed(title=title, url="https://www.twitch.tv/tooruche520", color=0xfc7b0a, description="[小徹的直播](https://www.twitch.tv/tooruche520)")
+        embed=discord.Embed(title=title, url="https://www.twitch.tv/tooruche520", color=0x9146ff, description="[小徹的直播](https://www.twitch.tv/tooruche520)")
         embed.set_author(name=user_name, icon_url=user_profile_image)
         embed.set_image(url=thumbnail_url)
         embed.add_field(name="Game ", value=game_name, inline=True)
         embed.add_field(name="viewer ", value=viewer_count, inline=True)
-        embed.set_footer(text=f'TK4叫你去看台uwu · 今天{current_time}')
+        embed.set_footer(text=f'TK4叫你去看台uwu · {current_time}')
         # await channel.send(embed=embed)
         return embed
 
@@ -139,3 +139,4 @@ async def setup(bot):
 
 
 # bot 前面記得加 self
+
