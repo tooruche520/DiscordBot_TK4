@@ -80,7 +80,7 @@ class FunnyCommands(commands.Cog):
             return "ERROR"
 
         
-        msg = await ctx.send(f'{ctx.author.mention} 早安早安汪 {emoji_list["tc_is_husky"]}')
+        msg = await ctx.send(f'{ctx.author.mention} {morning(send_time)} {emoji_list["tc_is_husky"]}')
         msg.add_reaction(str(emoji_list['tc_tongue']))
         send_time = msg.created_at()
         await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, 10), ctx.author)
