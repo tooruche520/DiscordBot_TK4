@@ -1,4 +1,6 @@
 from discord.ext import commands
+from discord.ui import Button, View
+import discord
 import logging as log
 from src.Id_collection import channle_id, emoji_list
 
@@ -13,9 +15,18 @@ class Grettings(commands.Cog):
     @commands.Cog.listener()
     async def on_member_join(self, member):
         log.info(f'{member} join')
+        
+        # TODO: [DEBUG] 加入按鈕
+        button = Button(label="打個招呼", style=discord.ButtonStyle.green, emoji=emoji_list["tc_happy"])
+        async def cb(interaction):
+            await interaction.response.send_message(f'{interaction.user.mention} 跟你說你好', file=discord.File('src/pic/tongue.png'))
+        button.callback = cb
+        view = View()
+        view.add_item(button)
+        
         channel = self.bot.get_channel(CHANNLE_ID_WELCOME)
         Identity = self.bot.get_channel(CHANNLE_ID_GET_ROLES)
-        await channel.send(f'恭喜 {member.mention} 踏入漏電的第一步\n請至 **{Identity.mention}** 領取你的身分組')
+        await channel.send(f'恭喜 {member.mention} 踏入漏電的第一步\n請至 **{Identity.mention}** 領取你的身分組', view = view)
 
     # event
     @commands.Cog.listener()

@@ -65,7 +65,7 @@ def update_user_exp(user_id, add_exp):
     # print(command)
     cursor.execute(command)
     connect.commit()
-    log.info(f"Successfully update user:{user_id} exp to database.")
+    log.info(f"Successfully add user:{user_id} {add_exp} exp to database.")
     return is_upgrade
 
 ##TODO

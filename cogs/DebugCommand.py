@@ -1,8 +1,8 @@
 from discord.ext import commands 
-from discord.abc import User
+from discord.user import User
 import os
 import logging as log
-from src.Id_collection import role_list
+from src.Id_collection import role_list, emoji_list
 
 ROLE_DEVELOPER = role_list["TK4開發團隊"]
 
@@ -11,18 +11,21 @@ class DebugCommand(commands.Cog):
         self.bot = bot
 
     async def is_developer(self, ctx):
+        # TODO: 比較問題
         if isinstance(ctx.author, User):
-            await ctx.send(f"You are in the private channel.")
+            await ctx.send(f"你正在私人頻道中，無法使用指令")
             return False
 
         if(ROLE_DEVELOPER not in [role.id for role in ctx.author.roles]):
-            await ctx.send(f"You don't have permission use this command.")
+            await ctx.send(f"很抱歉，你沒有權限使用此指令\n若你想成為開發者貢獻一份心力，請聯絡小徹")
             log.warning(f'{ctx.author} want to use dev command.')
             return False
         return True
+        
 
     # Reload one Cog you specified. 
     @commands.command()
+    # @commands.has_role(ROLE_DEVELOPER)
     async def reload(self, ctx, extension):
         if(not await self.is_developer(ctx)):
             return
@@ -59,6 +62,7 @@ class DebugCommand(commands.Cog):
     async def shutdown(self, ctx):
         if(not await self.is_developer(ctx)):
             return
+        await ctx.send(f'休息時間到了咪~\n等等見囉{emoji_list["tc_tongue"]}')
         log.info(f'Bot ended: command')
         await self.bot.close()
         

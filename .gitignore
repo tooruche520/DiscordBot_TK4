@@ -1,6 +1,6 @@
 token.json
 *.pyc
-test.py
+/test.py
 log.txt
 script.py
 users.json
@@ -9,3 +9,4 @@ bot-venv/
 venv/
 logs/
 .env
+src/user_data/user.db
