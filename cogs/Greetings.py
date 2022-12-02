@@ -6,6 +6,7 @@ from src.Id_collection import channle_id, emoji_list
 
 CHANNLE_ID_WELCOME = channle_id["歡迎入口"]
 CHANNLE_ID_GET_ROLES = channle_id["領取身分組"]
+CHANNLE_ID_RULES = channle_id["攝影棚使用規則"]
 
 class Grettings(commands.Cog):
     def __init__(self, bot):
@@ -16,17 +17,18 @@ class Grettings(commands.Cog):
     async def on_member_join(self, member):
         log.info(f'{member} join')
         
-        # TODO: [DEBUG] 加入按鈕
+        # TODO: [DEBUG] 加入按鈕，設定timeout
         button = Button(label="打個招呼", style=discord.ButtonStyle.green, emoji=emoji_list["tc_happy"])
         async def cb(interaction):
             await interaction.response.send_message(f'{interaction.user.mention} 跟你說你好', file=discord.File('src/pic/tongue.png'))
         button.callback = cb
-        view = View()
+        view = View(timeout=None)
         view.add_item(button)
         
         channel = self.bot.get_channel(CHANNLE_ID_WELCOME)
         Identity = self.bot.get_channel(CHANNLE_ID_GET_ROLES)
-        await channel.send(f'恭喜 {member.mention} 踏入漏電的第一步\n請至 **{Identity.mention}** 領取你的身分組', view = view)
+        Rules = self.bot.get_channel(CHANNLE_ID_RULES)
+        await channel.send(f'歡迎 {member.mention} 踏入漏電的第一步\n請至 **{Identity.mention}** 領取你的身分組，並至 {Rules.mention} 查看本伺服器規則', view = view)
 
     # event
     @commands.Cog.listener()

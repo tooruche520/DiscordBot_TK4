@@ -11,7 +11,6 @@ class DebugCommand(commands.Cog):
         self.bot = bot
 
     async def is_developer(self, ctx):
-        # TODO: 比較問題
         if isinstance(ctx.author, User):
             await ctx.send(f"你正在私人頻道中，無法使用指令")
             return False

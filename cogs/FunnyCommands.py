@@ -3,7 +3,9 @@ import discord
 import json
 import logging as log
 import modules.MyDatabase as db
+from random import randint
 from src.Id_collection import channle_id, emoji_list
+from src.greetings_data import morning_data
 from cogs.LevelSystem import LevelSystem
 from modules.LimitCounter import add_count
 
@@ -63,7 +65,24 @@ class FunnyCommands(commands.Cog):
     @commands.command()
     async def 早安(self, ctx):
         log.info(f'{ctx.author} 在叫你')
-        await ctx.send(f'{ctx.author.mention} 早安早安汪 {emoji_list["tc_is_husky"]}')
+        send_time = ctx.message.create_at()
+        
+        def morning(hour):
+            # hour = time.hour
+            if 0 <= hour and hour < 6:
+                return morning_data['h0-6'][randint(0, 2)]
+            elif 6 <= hour and hour < 12:
+                return morning_data['h6-12'][randint(0, 2)]
+            elif 12 <= hour and hour < 18:
+                return morning_data['h12-18'][randint(0, 2)]
+            elif 18 <= hour and hour < 24:
+                return morning_data['h18-24'][randint(0, 2)]
+            return "ERROR"
+
+        
+        msg = await ctx.send(f'{ctx.author.mention} 早安早安汪 {emoji_list["tc_is_husky"]}')
+        msg.add_reaction(str(emoji_list['tc_tongue']))
+        send_time = msg.created_at()
         await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, 10), ctx.author)
         # add_count(ctx.author.id)
 
@@ -89,8 +108,7 @@ class FunnyCommands(commands.Cog):
         except Exception as e:
             await ctx.send(f'指令錯誤! 請檢查指令之後再次嘗試')
             log.error(f'Error: {e}')
-    
-    # TODO: dubug this part        
+
     @commands.Cog.listener()
     async def on_message(self, message):
         if message.author == self.bot.user:
