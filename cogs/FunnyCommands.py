@@ -3,9 +3,8 @@ import discord
 import json
 import logging as log
 import modules.MyDatabase as db
-from random import randint
 from src.Id_collection import channle_id, emoji_list
-from src.greetings_data import morning_data
+from src.greetings_data import morning_response, night_response
 from cogs.LevelSystem import LevelSystem
 from modules.LimitCounter import add_count
 
@@ -25,7 +24,7 @@ class FunnyCommands(commands.Cog):
         self.bot = bot
 
     # commands
-    @commands.command()
+    @commands.command(brief="餵 TK4 一根棒棒糖", help="增加 10 親密度")
     async def 棒棒糖(self, ctx):
         log.info(f'{ctx.author} 給了TK4一根棒棒糖')
         await ctx.send(f'謝謝 {ctx.author.mention} 的棒棒糖')
@@ -33,27 +32,30 @@ class FunnyCommands(commands.Cog):
         # add_count(ctx.author.id)
 
     # commands
-    @commands.command()
+    @commands.command(brief="跟 TK4 說晚安", help="在不同時間會有不同的反應，等你來發掘!")
     async def 晚安(self, ctx):
         log.info(f'{ctx.author} 去睡覺了')
-        await ctx.send(f'{ctx.author.mention} 晚安晚安汪(*´∀`)~♥')
+        send_time = ctx.message.create_at()
+        # [DEBUG] night_response
+        msg = await ctx.send(f'{ctx.author.mention} {night_response(send_time)}')
+        msg.add_reaction(emoji_list['tc_tongue']) 
         await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, 10), ctx.author)
         # add_count(ctx.author.id)
 
     # commands
-    @commands.command()
+    @commands.command(brief="對 TK4 說尖頭拉瑞", help="你敢對小徹說尖頭??!?")
     async def 尖頭拉瑞(self, ctx):
         log.info(f'{ctx.author} 叫您尖頭拉瑞')
         await ctx.send(f'對 {ctx.author.mention} 釋放十萬伏特攻擊 -`д´-')
         
     # commands
-    @commands.command()
+    @commands.command(brief="", help="")
     async def 小徹(self, ctx):
         log.info(f'{ctx.author} 在叫你')
         await ctx.send(f'{ctx.author.mention} 在攝攝')
 
     # commands
-    @commands.command()
+    @commands.command(brief="摸摸TK4 uwu", help="")
     async def rua(self, ctx):
         log.info(f'{ctx.author} 在叫你')
         await ctx.send(f'{ctx.author.mention} 多...摸摸我一點汪.. {emoji_list["tc_is_husky"]}')
@@ -62,33 +64,19 @@ class FunnyCommands(commands.Cog):
 
 
     # commands
-    @commands.command()
+    @commands.command(brief="跟 TK4 說早安", help="在不同時間會有不同的反應，等你來發掘!")
     async def 早安(self, ctx):
         log.info(f'{ctx.author} 在叫你')
         send_time = ctx.message.create_at()
-        
-        def morning(hour):
-            # hour = time.hour
-            if 0 <= hour and hour < 6:
-                return morning_data['h0-6'][randint(0, 2)]
-            elif 6 <= hour and hour < 12:
-                return morning_data['h6-12'][randint(0, 2)]
-            elif 12 <= hour and hour < 18:
-                return morning_data['h12-18'][randint(0, 2)]
-            elif 18 <= hour and hour < 24:
-                return morning_data['h18-24'][randint(0, 2)]
-            return "ERROR"
-
-        
-        msg = await ctx.send(f'{ctx.author.mention} {morning(send_time)} {emoji_list["tc_is_husky"]}')
-        msg.add_reaction(str(emoji_list['tc_tongue']))
-        send_time = msg.created_at()
+        # [DEBUG] morning_response
+        msg = await ctx.send(f'{ctx.author.mention} {morning_response(send_time)}')
+        msg.add_reaction(emoji_list['tc_tongue'])
         await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, 10), ctx.author)
         # add_count(ctx.author.id)
 
 
     # commands
-    @commands.command()
+    @commands.command(brief="讓 TK4 幫忙送食物給小徹", help="看你給什麼	給喜歡的可能會加比較多親密度")
     async def 吃(self, ctx, food):
         # print(food)
         # food=""
