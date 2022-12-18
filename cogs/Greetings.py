@@ -6,7 +6,6 @@ from src.Id_collection import channle_id, emoji_list
 
 CHANNLE_ID_WELCOME = channle_id["歡迎入口"]
 CHANNLE_ID_GET_ROLES = channle_id["領取身分組"]
-CHANNLE_ID_RULES = channle_id["攝影棚使用規則"]
 
 class Grettings(commands.Cog):
     def __init__(self, bot):
@@ -27,8 +26,7 @@ class Grettings(commands.Cog):
         
         channel = self.bot.get_channel(CHANNLE_ID_WELCOME)
         Identity = self.bot.get_channel(CHANNLE_ID_GET_ROLES)
-        Rules = self.bot.get_channel(CHANNLE_ID_RULES)
-        await channel.send(f'歡迎 {member.mention} 踏入漏電的第一步\n請至 **{Identity.mention}** 領取你的身分組，並至 {Rules.mention} 查看本伺服器規則', view = view)
+        await channel.send(f'歡迎 {member.mention} 踏入漏電的第一步\n請至 **{Identity.mention}** 領取你的身分組並查看本伺服器規則', view = view)
 
     # event
     @commands.Cog.listener()
