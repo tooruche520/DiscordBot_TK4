@@ -46,7 +46,7 @@ def update_user_exp(user_id, add_exp):
         log.info(f"Command limit.")
         return False
 
-    add_count(user_id)
+    add_count(user_id)  # 增加每小時限制計數
     command = "UPDATE user_exp "
     user = get_user_by_userid(user_id)
     if(user == None):
@@ -65,8 +65,30 @@ def update_user_exp(user_id, add_exp):
     # print(command)
     cursor.execute(command)
     connect.commit()
-    log.info(f"Successfully add user:{user_id} {add_exp} exp to database.")
+    # log.info(f"Successfully add user:{user_id} {add_exp} exp to database.")
     return is_upgrade
+
+
+def reload_user_exp(user_id):
+    command = "UPDATE user_exp "
+    user = get_user_by_userid(user_id)
+    if(user == None):
+        log.error(f"Cannot get user data from database.")
+        return False
+
+    experience = user.experience
+    level = user.level
+    for i in range(0, 51):
+        if(experience >= int(table_level_exp[i+1][1])):
+            level = i+1
+
+    command += f"SET level='{level}' WHERE user_id='{user_id}'"
+    # print(command)
+    cursor.execute(command)
+    connect.commit()
+    # log.info(f"Successfully add user:{user_id} {add_exp} exp to database.")
+    return False
+    
 
 ##TODO
 def delete_user(user):

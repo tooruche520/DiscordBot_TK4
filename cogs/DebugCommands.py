@@ -3,15 +3,15 @@ from discord.user import User
 import os
 import logging as log
 from src.Id_collection import role_list, emoji_list
+import modules.MyDatabase as db
 
 ROLE_DEVELOPER = role_list["TK4開發團隊"]
 
-class DebugCommand(commands.Cog):
+class DebugCommand(commands.Cog, description="TK4開發專用除錯指令，只有TK4開發團隊有權限使用"):
     def __init__(self, bot):
         self.bot = bot
 
     async def is_developer(self, ctx):
-        # TODO: 比較問題
         if isinstance(ctx.author, User):
             await ctx.send(f"你正在私人頻道中，無法使用指令")
             return False
@@ -24,7 +24,7 @@ class DebugCommand(commands.Cog):
         
 
     # Reload one Cog you specified. 
-    @commands.command()
+    @commands.command(brief="重新讀取指定cog", help="!reload [指定cog名稱]")
     # @commands.has_role(ROLE_DEVELOPER)
     async def reload(self, ctx, extension):
         if(not await self.is_developer(ctx)):
@@ -35,7 +35,7 @@ class DebugCommand(commands.Cog):
         await ctx.send(f"reloaded {extension}")
 
     # Reload all Cog in project. 
-    @commands.command()
+    @commands.command(brief="重新讀取所有cog", help="!reload_all")
     async def reload_all(self, ctx):
         if(not await self.is_developer(ctx)):
             return
@@ -47,7 +47,7 @@ class DebugCommand(commands.Cog):
         await ctx.send(f"reloaded all")
 
     # Delete the last {limit} messages.
-    @commands.command()
+    @commands.command(brief="刪除當前頻道的指定數量訊息", help="!delete_all [訊息數量]")
     async def delete_all(self, ctx, limit):
         if(not await self.is_developer(ctx)):
             return
@@ -58,7 +58,7 @@ class DebugCommand(commands.Cog):
         log.info(f"completed deleted {limit} messages")
 
     # Shutdown bot by command.
-    @commands.command()
+    @commands.command(brief="讓TK4休息一下", help="!shutdown")
     async def shutdown(self, ctx):
         if(not await self.is_developer(ctx)):
             return
@@ -66,6 +66,13 @@ class DebugCommand(commands.Cog):
         log.info(f'Bot ended: command')
         await self.bot.close()
         
+    
+    # @commands.command()
+    # async def reload_user_exp(self, ctx):
+    #     for guild in self.bot.guilds:
+    #         for member in guild.members:
+    #             db.reload_user_exp(member.id)
+    #     log.info(f'Susseccfully reloaded user exp and level from csv.')
 
 
 # 要用 async await 
