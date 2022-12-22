@@ -10,3 +10,4 @@ venv/
 logs/
 .env
 src/user_data/user.db
+TODO.md

@@ -6,8 +6,7 @@ import time
 import logging as log
 from modules.TK4_Logger import TK4_logger
 from dotenv import dotenv_values
-from cogs import CustomHelpCommand
-
+from modules.CustomHelpCommand import CustomHelpCommand
 intents = discord.Intents.all()
 client = discord.Client(intents=intents)
 bot = commands.Bot(command_prefix="!", intents=intents, help_command=CustomHelpCommand())

@@ -15,7 +15,7 @@ from cogs.LevelSystem import LevelSystem
 
 ROLE_HUSKY = role_list["偉大的哈士奇總裁"]
 
-class Test(commands.Cog):
+class Test(commands.Cog, description="測試用的類別"):
     def __init__(self, bot):
         self.bot = bot
         
@@ -37,7 +37,7 @@ class Test(commands.Cog):
         self.bot.add_command(fun)
     
     # commands
-    @commands.command()
+    @commands.command(brief="新增臨時自訂指令，現在只有總裁本人能用", help="!add_command [指令名稱] [回覆]")
     async def add_command(self, ctx, name, response, exp=10):
         if self.is_developer(ctx):
             await self.add_my_command(name, response, exp)

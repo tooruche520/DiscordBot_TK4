@@ -11,7 +11,7 @@ from modules.User import User
 
 CHANNLE_ID_LEVEL = channle_id["升等通知"]
 
-class LevelSystem(commands.Cog):
+class LevelSystem(commands.Cog, description="TK4愛你系統"):
     def __init__(self, bot):
         self.bot = bot
 
@@ -37,6 +37,10 @@ class LevelSystem(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
+
+        if member.bot:
+            return;
+        
         user_id = member.id
         user_adoption = User.Adoption.GENERAL
         db.add_user(User(user_id, user_adoption))
@@ -56,12 +60,12 @@ class LevelSystem(commands.Cog):
         await self.send_level_up_message(db.update_user_exp(message.author.id, 2), message.author)
         
 
-    @commands.command()
+    @commands.command(brief="查看TK4有多愛你", help="!level")
     async def level(self, ctx):
         user_data = db.get_user_by_userid(ctx.author.id)
         level = user_data.level
         experience = user_data.experience
-        await ctx.send(f'{ctx.author.mention} 目前是等級{level}，累積了{experience}經驗值!!')
+        await ctx.send(f'{ctx.author.mention} 目前是等級{level}，累積了{experience}點親密度!!')
 
 
 # 要用 async await 

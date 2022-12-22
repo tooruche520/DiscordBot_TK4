@@ -66,7 +66,7 @@ class StreamingNotifaction(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         log.info('Notifaction loop is on activity')
-        @tasks.loop(seconds=10)
+        @tasks.loop(seconds=40)
         async def live_notifs_loop():
             guild = self.bot.get_guild(1028268840112640100)
             role = guild.get_role(ROLE_NOTIFIACTION)

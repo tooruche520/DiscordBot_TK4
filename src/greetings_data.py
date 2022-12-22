@@ -1,3 +1,5 @@
+# import pytz
+from datetime import timedelta
 from random import randint
 from src.Id_collection import emoji_list
 
@@ -25,7 +27,7 @@ morning_data = {
     [
         "美國的朋友早安呀~" + emoji_list['tc_happy'],
         "你的時間是錯位了咪?" + emoji_list['tc_tongue'],
-        "你在發什咪神經"
+        "你在發什咪神經" + emoji_list['tc_sip']
     ],
     '南極':
     [
@@ -35,14 +37,19 @@ morning_data = {
 }
 
 def morning_response(send_time):
-    hour = send_time.hour
-    if 0 <= hour and hour < 6:
+    
+    # 直接加8小時 我知道這很糟 但是先這樣ㄅQQ
+    delta = timedelta(hours=8)
+    send_time = send_time + delta
+    
+    current_hour = send_time.hour
+    if 0 <= current_hour and current_hour < 6:
         return morning_data['h0-6'][randint(0, 3)]
-    elif 6 <= hour and hour < 12:
+    elif 6 <= current_hour and current_hour < 12:
         return morning_data['h6-12'][randint(0, 2)]
-    elif 12 <= hour and hour < 18:
+    elif 12 <= current_hour and current_hour < 18:
         return morning_data['h12-18'][randint(0, 2)]
-    elif 18 <= hour and hour < 24:
+    elif 18 <= current_hour and current_hour < 24:
         return morning_data['h18-24'][randint(0, 2)]
     else:
         return "ERROR"
@@ -52,11 +59,13 @@ night_data = {
     [
         "晚安晚安汪(*´∀`)~♥", 
         "嗷夜對身體不太好喔OAO" + emoji_list['tc_sad'], 
-        "我...我還能撐" + emoji_list['tc_sad']
+        "我...我還能撐" + emoji_list['tc_sad'],
+        "嗷夜奮戰辛苦了，要來個睡前抱抱嗎?祝你好夢!" + emoji_list['tc_happy'] 
+        
     ],
     'h6-12': 
     [   
-        "嗷夜奮戰辛苦了，要來個睡前抱抱嗎?祝你好夢!" + emoji_list['tc_happy'], 
+        "我...我還能撐" + emoji_list['tc_sad'],
         "好亮!這樣你睡得著咪", 
         "不可以翹課喔~等一下都是空堂對吧!" + emoji_list['tc_sad'], 
     ],
@@ -64,7 +73,8 @@ night_data = {
     [
         "晚安，朋友，早安，要睡懶覺嗎" + emoji_list['tc_tongue'],
         "要一起吃消夜咪?" + emoji_list['tc_is_husky'],
-        "你在發什咪神經" + emoji_list['tc_angry']
+        "你在發什咪神經" + emoji_list['tc_angry'],
+        "這麼早電就漏光ㄌ 不優ㄛ" + emoji_list['tc_sip']
     ],
     'h18-21': 
     [
@@ -88,14 +98,19 @@ night_data = {
 
 
 def night_response(send_time):
-    hour = send_time.hour
-    if 1 <= hour and hour < 6:
-        return night_data['h1-6'][randint(0, 2)]
-    elif 6 <= hour and hour < 12:
+        
+    # 直接加8小時 我知道這很糟 但是先這樣ㄅQQ
+    delta = timedelta(hours=8)
+    send_time = send_time + delta
+        
+    current_hour = send_time.hour
+    if 1 <= current_hour and current_hour < 6:
+        return night_data['h1-6'][randint(0, 3)]
+    elif 6 <= current_hour and current_hour < 12:
         return night_data['h6-12'][randint(0, 2)]
-    elif 12 <= hour and hour < 18:
-        return night_data['h12-18'][randint(0, 2)]
-    elif 18 <= hour and hour < 21:
+    elif 12 <= current_hour and current_hour < 18:
+        return night_data['h12-18'][randint(0, 3)]
+    elif 18 <= current_hour and current_hour < 21:
         return night_data['h18-21'][randint(0, 2)]
     else:
         return night_data['h21-1'][randint(0, 3)]

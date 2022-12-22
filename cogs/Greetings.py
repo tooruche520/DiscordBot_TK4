@@ -16,7 +16,9 @@ class Grettings(commands.Cog):
     async def on_member_join(self, member):
         log.info(f'{member} join')
         
-        # TODO: [DEBUG] 加入按鈕，設定timeout
+        if member.bot:
+            return;
+        
         button = Button(label="打個招呼", style=discord.ButtonStyle.green, emoji=emoji_list["tc_happy"])
         async def cb(interaction):
             await interaction.response.send_message(f'{interaction.user.mention} 跟你說你好', file=discord.File('src/pic/tongue.png'))
