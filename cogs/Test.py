@@ -1,7 +1,7 @@
 from discord.ext import commands 
 import logging as log
 import modules.MyDatabase as db
-from src.Id_collection import channle_id, emoji_list
+from src.Id_collection import channle_id, emoji_list, role_list
 from cogs.LevelSystem import LevelSystem
 
 # | 指令       | 描述                    | 經驗值             | 備註                    |
@@ -13,9 +13,20 @@ from cogs.LevelSystem import LevelSystem
 # | 以下待加入 | ----------------------- | ------------------ | ----------------------- |
 # | !rua       | 摸摸TK4 uwu             | 增加 {N}           |                         |
 
-class Test(commands.Cog):
+ROLE_HUSKY = role_list["偉大的哈士奇總裁"]
+
+class Test(commands.Cog, description="測試用的類別"):
     def __init__(self, bot):
         self.bot = bot
+        
+    # [DEBUG]
+    # TODO: 測試沒問題就搬到 FunnyCommands.py
+    async def is_developer(self, ctx):
+        if(ROLE_HUSKY not in [role.id for role in ctx.author.roles]):
+            await ctx.send(f"很抱歉，你沒有權限使用此指令\n若你想成為開發者貢獻一份心力，請聯絡小徹")
+            log.warning(f'{ctx.author} want to use dev command.')
+            return False
+        return True
         
     async def add_my_command(self, name, response, exp):
         @commands.command(name=name)
@@ -26,10 +37,11 @@ class Test(commands.Cog):
         self.bot.add_command(fun)
     
     # commands
-    @commands.command()
-    async def add_command(self, ctx, name, response):
-        await self.add_my_command(name, response, 10)
-        await ctx.send(f'Add command {name}')
+    @commands.command(brief="新增臨時自訂指令，現在只有總裁本人能用", help="!add_command [指令名稱] [回覆]")
+    async def add_command(self, ctx, name, response, exp=10):
+        if self.is_developer(ctx):
+            await self.add_my_command(name, response, exp)
+            await ctx.send(f'Add command {name}')
            
 # 要用 async await 
 async def setup(bot):
