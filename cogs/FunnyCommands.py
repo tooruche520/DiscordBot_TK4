@@ -14,8 +14,9 @@ from modules.LimitCounter import add_count
 # | !晚安      | 跟 TK4 說晚安           | 增加 {N}           |                         |
 # | !尖頭拉瑞  | 對 TK4 說尖頭拉瑞       | **經驗值不會增加** | 小徹不開心，TK4也不開心 |
 # | !吃 \*食物 | 讓 TK4 幫忙送食物給小徹 | 看你給什麼         | 給喜歡的可能會加比較多  |
-# | 以下待加入 | ----------------------- | ------------------ | ----------------------- |
 # | !rua       | 摸摸TK4 uwu             | 增加 {N}           |                         |
+# | 以下待加入 | ----------------------- | ------------------ | ----------------------- |
+# |           |                         |                    |                         |
 
 CHANNLE_ID_LEVEL = channle_id["升等通知"]
 
@@ -58,7 +59,7 @@ class FunnyCommands(commands.Cog, description="你可以用這些指令與TK4對
         await ctx.send(f'對 {ctx.author.mention} 釋放十萬伏特攻擊 -`д´-')
         
     # commands
-    @commands.command(brief="叫一下小徹", help="!小徹\n這並不會幫你@小徹 有事請直接使用tag讓我看到")
+    @commands.command(brief="叫一下小徹", help="!小徹\n這並不會幫你@小徹 有事請直接使用tag讓小徹看到")
     async def 小徹(self, ctx):
         log.info(f'{ctx.author} 在叫你')
         await ctx.send(f'{ctx.author.mention} 他在攝攝，有事請直接@小徹')
@@ -70,7 +71,19 @@ class FunnyCommands(commands.Cog, description="你可以用這些指令與TK4對
         await ctx.send(f'{ctx.author.mention} 多...摸摸我一點汪.. {emoji_list["tc_is_husky"]}')
         await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, 10), ctx.author)
         # add_count(ctx.author.id)
-
+        
+    # commands
+    @commands.command(brief="小徹負責當電烤爐", help="!電烤爐\n讓小徹成爲您的電烤爐\n請不要用金屬夾去夾肉哦")
+    async def 電烤爐(self, ctx):
+        log.info(f'{ctx.author} 叫您當電烤爐')
+        await ctx.send(f'{ctx.author.mention} 請記得不要用金屬夾去夾肉哦 {emoji_list["tc_tongue"]}')
+        await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, 5), ctx.author)
+        
+    @commands.command(brief="催小徹發薪水", help="!小頭\n讓小徹儘快出薪水")
+    async def 小頭(self, ctx):
+        log.info(f'{ctx.author} 叫您發薪水')
+        await ctx.send(f'{ctx.author.mention} 今晚來小徹的辦公室 {emoji_list["tc_is_husky"]}')
+        await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, 5), ctx.author)
 
     # commands
     @commands.command(brief="讓 TK4 幫忙送食物給小徹", help="!吃 [給小徹吃的東西]\n看你給什麼 給喜歡的可能會加比較多親密度")
