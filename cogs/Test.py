@@ -42,6 +42,14 @@ class Test(commands.Cog, description="測試用的類別"):
         if self.is_developer(ctx):
             await self.add_my_command(name, response, exp)
             await ctx.send(f'Add command {name}')
+            
+    async def on_tweet(self, url):
+        await self.get_destination().send("小徹發新照片拉~快去點個讚吧uwu\n"+url)
+                
+    async def on_tweet_callback(url ,callback):
+        callback(url)     
+    
+    
            
 # 要用 async await 
 async def setup(bot):

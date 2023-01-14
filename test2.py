@@ -1,13 +1,7 @@
-# app.py
+class BBB():
+    def on_tweet_received(url):
+        print("Your tweet is on this url: " + url)
+    
 
-from flask import Flask, request
-
-app = Flask(__name__)
-
-@app.route('/webhook', methods=['POST'])
-def webhook():
-    if request.method == 'POST':
-        print("Data received from Webhook is: ", request.json)
-        return "Webhook received!"
-
-app.run(host='127.0.0.1', port=8000)
+    
+BBB.on_tweet_received("aaaa")
