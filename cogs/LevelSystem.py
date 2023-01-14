@@ -22,6 +22,14 @@ class LevelSystem(commands.Cog, description="TK4愛你系統"):
             level = user_data.level
             await channel.send(f'{user.mention} 升到了第{level}等')
         return
+    
+    async def send_level_up_message_test(self, is_upgrade, level, user):
+        if(is_upgrade):
+            channel = self.bot.get_channel(CHANNLE_ID_LEVEL)
+            # user_data = user
+            # level = user_data.level
+            await channel.send(f'{user.mention} 升到了第{level}等')
+        return
 
     @commands.Cog.listener()
     async def on_ready(self):

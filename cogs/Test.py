@@ -1,8 +1,9 @@
-from discord.ext import commands 
+from discord.ext import commands, tasks
 import logging as log
 import modules.MyDatabase as db
 from src.Id_collection import channle_id, emoji_list, role_list
 from cogs.LevelSystem import LevelSystem
+import asyncio
 
 # | 指令       | 描述                    | 經驗值             | 備註                    |
 # | ---------- | ----------------------- | ------------------ | ----------------------- |
@@ -19,6 +20,16 @@ class Test(commands.Cog, description="測試用的類別"):
     def __init__(self, bot):
         self.bot = bot
         
+    async def on_ready(self):
+        # self.bot.bg_task = self.bot.loop.create_loop(self.websocket_task())
+        @tasks.loop()
+        async def background_task():
+            await asyncio.sleep(5)
+            log.info("Background task is running")
+        background_task.start()
+    # async def websocket_task(self):
+        
+        
     # [DEBUG]
     # TODO: 測試沒問題就搬到 FunnyCommands.py
     async def is_developer(self, ctx):
@@ -33,7 +44,8 @@ class Test(commands.Cog, description="測試用的類別"):
         async def fun(ctx):
             # log.info(f'{ctx.author} 給了TK4一根棒棒糖')
             await ctx.send(response)
-            await LevelSystem.send_level_up_message(ctx.bot, db.update_user_exp(ctx.author.id, exp), ctx.author)
+            # await LevelSystem.send_level_up_message(ctx.bot, db.update_user_exp(ctx.author.id, exp), ctx.author)
+            await db.update_user_exp_test(ctx.author, exp, LevelSystem.send_level_up_message_test)
         self.bot.add_command(fun)
     
     # commands
@@ -42,7 +54,16 @@ class Test(commands.Cog, description="測試用的類別"):
         if self.is_developer(ctx):
             await self.add_my_command(name, response, exp)
             await ctx.send(f'Add command {name}')
-           
+    
+    # commands
+    @commands.command()
+    # @commands.check(is_developer)
+    @commands.has_role(ROLE_HUSKY)
+    @commands.guild_only()
+    async def EXP(self, ctx, exp):
+        await db.update_user_exp_test(ctx.author, exp, LevelSystem.send_level_up_message_test)
+        await ctx.send(f'Add {ctx.auther.mention} {exp} exp!')
+        
 # 要用 async await 
 async def setup(bot):
     await bot.add_cog(Test(bot))

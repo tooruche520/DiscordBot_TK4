@@ -1,13 +1,27 @@
-# app.py
+import requests
+from dotenv import dotenv_values
 
-from flask import Flask, request
+config = dotenv_values(".env")
+TWITCH_APP_ID = config.get("TWITCH_APP_ID")
+TWITCH_APP_SECRET = config.get("TWITCH_APP_SECRET")
 
-app = Flask(__name__)
+body = {
+    'client_id': TWITCH_APP_ID,
+    'client_secret': TWITCH_APP_SECRET,
+    "grant_type": 'client_credentials'
+}
 
-@app.route('/webhook', methods=['POST'])
-def webhook():
-    if request.method == 'POST':
-        print("Data received from Webhook is: ", request.json)
-        return "Webhook received!"
+r = requests.post('https://id.twitch.tv/oauth2/token', body)
+keys = r.json()
+print(f'key= {keys}')
 
-app.run(host='127.0.0.1', port=8000)
+API_HEADERS = {
+    'Client-ID': TWITCH_APP_ID,
+    'Accept': 'application/vnd.twitchtv.v5+json',
+    'Authorization': 'Bearer ' + keys['access_token']
+}
+
+url = 'https://api.twitch.tv/helix/users?login=tooruche520'
+req = requests.Session().get(url, headers=API_HEADERS)
+jsondata = req.json()
+print(jsondata)

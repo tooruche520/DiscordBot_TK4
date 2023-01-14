@@ -118,3 +118,28 @@ def get_user_by_userid(user_id):
     return User.User(user_id, adoption, level, experience)
 
 
+def update_user_exp_test(user, add_exp, send_level_up_message_test):
+    if(get_limit_count(user.id) >= 5):
+        log.info(f"Command limit.")
+        return False
+
+    add_count(user.id)  # 增加每小時限制計數
+    command = "UPDATE user_exp "
+    user_data = get_user_by_userid(user.id)
+    if(user_data == None):
+        log.error(f"Cannot get user data from database.")
+        return False
+
+    experience = user_data.experience + add_exp
+    level = user_data.level
+    is_upgrade = False
+    if(level != 51):
+        if(experience >= int(table_level_exp[level+1][1])):
+            level += 1
+            is_upgrade = True
+
+    command += f"SET level='{level}', experience='{experience}' WHERE user_id='{user_id}'"
+    # print(command)
+    cursor.execute(command)
+    connect.commit()
+    send_level_up_message_test(is_upgrade=is_upgrade, level=level, user=user)
