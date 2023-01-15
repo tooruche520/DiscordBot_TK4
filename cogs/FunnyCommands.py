@@ -3,10 +3,11 @@ import discord
 import json
 import logging as log
 import modules.MyDatabase as db
-from src.Id_collection import channle_id, emoji_list
+from src.Id_collection import channle_id, emoji_list, role_list
 from src.greetings_data import morning_response, night_response
 from cogs.LevelSystem import LevelSystem
 from modules.LimitCounter import add_count
+import modules.CommandsDatabase as command_db
 
 # | 指令       | 描述                    | 經驗值             | 備註                    |
 # | ---------- | ----------------------- | ------------------ | ----------------------- |
@@ -18,10 +19,15 @@ from modules.LimitCounter import add_count
 # | !rua       | 摸摸TK4 uwu             | 增加 {N}           |                         |
 
 CHANNLE_ID_LEVEL = channle_id["升等通知"]
+ROLE_HUSKY = role_list["偉大的哈士奇總裁"]
 
 class FunnyCommands(commands.Cog, description="你可以用這些指令與TK4對話"):
     def __init__(self, bot):
         self.bot = bot
+        
+    @commands.Cog.listener()
+    async def on_ready(self):
+        await self.add_command_from_database()
 
     # commands
     @commands.command(brief="餵 TK4 一根棒棒糖", help="!棒棒糖\n可以增加 10 親密度")
@@ -75,8 +81,6 @@ class FunnyCommands(commands.Cog, description="你可以用這些指令與TK4對
     # commands
     @commands.command(brief="讓 TK4 幫忙送食物給小徹", help="!吃 [給小徹吃的東西]\n看你給什麼 給喜歡的可能會加比較多親密度")
     async def 吃(self, ctx, food):
-        # print(food)
-        # food=""
         try:
             hateFood = ['多益','茄子','青椒']
             loveFood = ['香菜','布丁','咖喱']
@@ -103,14 +107,49 @@ class FunnyCommands(commands.Cog, description="你可以用這些指令與TK4對
         if '<@1028872389385277501>' in message.content:
             await message.channel.send('叫我咪?')
             
-    @commands.Cog.listener()
-    async def on_command_error(self, ctx, error):
-        if isinstance(error, commands.CommandNotFound):
-            await ctx.send(f'窩 窩不知道這是什麼意思 {emoji_list["tc_sad"]}')
-        else:
-            await ctx.send(f'你要不要聽聽看你在說甚麼 {emoji_list["tc_sip"]}')
-        
- 
+            
+    async def add_my_command(self, name, response, exp):
+        @commands.command(name=name)
+        async def fun(ctx):
+            await ctx.send(response)
+            await LevelSystem.send_level_up_message(ctx.bot, db.update_user_exp(ctx.author.id, exp), ctx.author)
+        self.bot.add_command(fun)
+    
+    
+    # commands
+    @commands.has_role(ROLE_HUSKY)
+    @commands.guild_only()
+    @commands.command(brief="新增臨時自訂指令，現在只有總裁本人能用", help="!add_command [指令名稱] [回覆]")
+    async def add_command(self, ctx, name, response, exp=10):
+        await self.add_my_command(name, response, exp)
+        await ctx.send(f'Add command {name}')
+        print(self.add_command.cog_name)
+    
+    
+    # [DEBUG]
+    async def add_command_from_database(self):
+        commands_list = command_db.get_all_commands()
+        for command in commands_list:
+            name = command[1]
+            response = command[2]
+            brief = command[3]
+            help = command[4]
+            experience = command[5]
+            @commands.command(name=name, brief=brief, help=help)
+            async def fun(ctx):
+                # log.info(f'{ctx.author} 給了TK4一根棒棒糖')
+                await ctx.send(response)
+                # await LevelSystem.send_level_up_message(ctx.bot, db.update_user_exp(ctx.author.id, exp), ctx.author)
+            self.bot.add_command(fun)
+    
+    # [DEBUG]
+    # commands
+    @commands.command()
+    @commands.has_role(ROLE_HUSKY)
+    @commands.guild_only()
+    async def EXP(self, ctx, exp):
+        await LevelSystem.send_level_up_message(ctx.bot, db.update_user_exp(ctx.author.id, int(exp)), ctx.author)
+        await ctx.send(f'Add {ctx.author.mention} {exp} exp!')
             
 # 要用 async await 
 async def setup(bot):
