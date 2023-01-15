@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands 
 
-# [DEBUG]
 class CustomHelpCommand(commands.HelpCommand):
     
     def __init__(self):
