@@ -1,6 +1,7 @@
 import discord
 import requests
 import time
+import aiohttp
 import logging as log
 from discord.ext import tasks, commands
 from twitchAPI.twitch import Twitch
@@ -31,8 +32,6 @@ class StreamingNotifaction(commands.Cog):
         # print(f'key= {keys}')
 
         # Authentication with Twitch API.
-        twitch = Twitch(TWITCH_APP_ID, TWITCH_APP_SECRET)
-        twitch.authenticate_app([])
         
         self.API_HEADERS = {
             'Client-ID': TWITCH_APP_ID,
@@ -40,20 +39,21 @@ class StreamingNotifaction(commands.Cog):
             'Authorization': 'Bearer ' + keys['access_token']
         }
 
-    def checkuser(self, user):
+    async def checkuser(self, user):
         try:
             TWITCH_STREAM_API_ENDPOINT_V5 = "https://api.twitch.tv/helix/streams?{}"
             url = TWITCH_STREAM_API_ENDPOINT_V5.format(f"user_login={user}")
             try:
-                req = requests.Session().get(url, headers=self.API_HEADERS)
-                jsondata = req.json()
-                # print(jsondata)
-                for info in jsondata['data']:
-                    # print(f'{info["user_name"]} is streaming!')
-                    return True, jsondata
-                else:
-                    # print(f'{user} is not streaming!')
-                    return False, None    
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(url, headers=self.API_HEADERS) as req:
+                        jsondata = await req.json()
+                        # print(jsondata)
+                        for info in jsondata['data']:
+                            # print(f'{info["user_name"]} is streaming!')
+                            return True, jsondata
+                        else:
+                            # print(f'{user} is not streaming!')
+                            return False, None    
             except Exception as e:
                 print("Error checking user: ", e)
                 return False, None
@@ -65,6 +65,8 @@ class StreamingNotifaction(commands.Cog):
     # event
     @commands.Cog.listener()
     async def on_ready(self):
+        twitch = Twitch(TWITCH_APP_ID, TWITCH_APP_SECRET)
+        await twitch.authenticate_app([])
         log.info('Notifaction loop is on activity')
         @tasks.loop(seconds=40)
         async def live_notifs_loop():
@@ -73,7 +75,7 @@ class StreamingNotifaction(commands.Cog):
             
             twitch_name = 'tooruche520'
 
-            status, response = self.checkuser(twitch_name)
+            status, response = await self.checkuser(twitch_name)
 
             # global last_started_at
             if status is True :
