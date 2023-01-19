@@ -12,8 +12,8 @@ TWITCH_APP_ID = config.get("TWITCH_APP_ID")
 TWITCH_APP_SECRET = config.get("TWITCH_APP_SECRET")
 USER_SCOPE = [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT, AuthScope.CHANNEL_MODERATE]
 
-async def hello(uri):
-    async with websockets.connect(uri) as websocket:
+async def hello():
+    async with websockets.connect('wss://eventsub-beta.wss.twitch.tv/ws') as websocket:
         data = await websocket.recv()
         data = json.loads(data)
         # print(type(data))
@@ -92,7 +92,7 @@ async def hello(uri):
             
             
 
-asyncio.get_event_loop().run_until_complete(hello('wss://eventsub-beta.wss.twitch.tv/ws'))
+asyncio.get_event_loop().run_until_complete(hello())
 
 
 

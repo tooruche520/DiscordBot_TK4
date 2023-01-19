@@ -1,34 +1,100 @@
-import tweepy
-import tweepy.asynchronous as twpy
+import requests
+import os
+import json
 from dotenv import dotenv_values
 
-from test2 import on_tweet_received
+# To set your enviornment variables in your terminal run the following line:
+# export 'BEARER_TOKEN'='<your_bearer_token>'
+# bearer_token = os.environ.get("BEARER_TOKEN")
 
 config = dotenv_values(".env")
-TWITTER_API_KEY = config.get("TWITTER_API_KEY")
-TWITTER_API_KEY_SECRET = config.get("TWITTER_API_KEY_SECRET")
-TWITTER_BEARER_TOKEN = config.get("TWITTER_BEARER_TOKEN")
-TWITTER_ACCESS_TOKEN = config.get("TWITTER_ACCESS_TOKEN")
-TWITTER_ACCESS_TOKEN_SECRET = config.get("TWITTER_ACCESS_TOKEN_SECRET")
+bearer_token = config.get("TWITTER_BEARER_TOKEN")
 
-client = twpy.AsyncClient(TWITTER_BEARER_TOKEN, TWITTER_API_KEY, TWITTER_ACCESS_TOKEN_SECRET, 
-                     TWITTER_ACCESS_TOKEN, TWITTER_ACCESS_TOKEN_SECRET)
 
-class MyStreamingClient(twpy.AsyncStreamingClient):
-    async def on_tweet(self, tweet):
-        end_point = "https://twitter.com/twitter/status/"
-        url = end_point + str(tweet.id)
+def bearer_oauth(r):
+    """
+    Method required by bearer token authentication.
+    """
 
-stream_client = MyStreamingClient(TWITTER_BEARER_TOKEN)
+    r.headers["Authorization"] = f"Bearer {bearer_token}"
+    r.headers["User-Agent"] = "v2FilteredStreamPython"
+    return r
 
-# 清除之前套用的規則
-print(stream_client.get_rules().data)
-for rule in stream_client.get_rules().data:
-    print(rule) 
-    stream_client.delete_rules(rule.id)
 
-# 新增規則
-# 搜尋邏輯API： https://developer.twitter.com/en/docs/twitter-api/tweets/search/integrate/build-a-query
-stream_client.add_rules(tweepy.StreamRule(value="from:tooruche #小徹在攝攝 -is:retweet -is:reply"))
-# 啟用
-stream_client.filter()
+def get_rules():
+    response = requests.get(
+        "https://api.twitter.com/2/tweets/search/stream/rules", auth=bearer_oauth
+    )
+    if response.status_code != 200:
+        raise Exception(
+            "Cannot get rules (HTTP {}): {}".format(response.status_code, response.text)
+        )
+    print(json.dumps(response.json()))
+    return response.json()
+
+
+def delete_all_rules(rules):
+    if rules is None or "data" not in rules:
+        return None
+
+    ids = list(map(lambda rule: rule["id"], rules["data"]))
+    payload = {"delete": {"ids": ids}}
+    response = requests.post(
+        "https://api.twitter.com/2/tweets/search/stream/rules",
+        auth=bearer_oauth,
+        json=payload
+    )
+    if response.status_code != 200:
+        raise Exception(
+            "Cannot delete rules (HTTP {}): {}".format(
+                response.status_code, response.text
+            )
+        )
+    print(json.dumps(response.json()))
+
+
+def set_rules(delete):
+    # You can adjust the rules if needed
+    sample_rules = [
+        {"value": "from:tooruche #小徹在攝攝 -is:retweet -is:reply", "tag": ""}
+    ]
+    payload = {"add": sample_rules}
+    response = requests.post(
+        "https://api.twitter.com/2/tweets/search/stream/rules",
+        auth=bearer_oauth,
+        json=payload,
+    )
+    if response.status_code != 201:
+        raise Exception(
+            "Cannot add rules (HTTP {}): {}".format(response.status_code, response.text)
+        )
+    print(json.dumps(response.json()))
+
+
+def get_stream(set):
+    response = requests.get(
+        "https://api.twitter.com/2/tweets/search/stream", auth=bearer_oauth, stream=True,
+    )
+    print(response.status_code)
+    if response.status_code != 200:
+        raise Exception(
+            "Cannot get stream (HTTP {}): {}".format(
+                response.status_code, response.text
+            )
+        )
+    for response_line in response.iter_lines():
+        if response_line:
+            json_response = json.loads(response_line)
+            print(json.dumps(json_response, indent=4, sort_keys=True))
+        else:
+            print("AAA")
+
+def main():
+    rules = get_rules()
+    delete = delete_all_rules(rules)
+    set = set_rules(delete)
+    get_stream(set)
+
+
+if __name__ == "__main__":
+    main()
