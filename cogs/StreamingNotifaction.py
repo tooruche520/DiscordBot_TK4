@@ -55,7 +55,7 @@ class StreamingNotifaction(commands.Cog):
                             # print(f'{user} is not streaming!')
                             return False, None    
             except Exception as e:
-                print("Error checking user: ", e)
+                log.error("Error checking user: ", e)
                 return False, None
         except IndexError:
             return False, None
