@@ -1,5 +1,6 @@
 import sqlite3
 import logging as log
+import datetime
 # import modules.User as User
 import csv
 # from modules.LimitCounter import get_limit_count, add_count
@@ -25,6 +26,7 @@ cursor_commands.execute("""CREATE TABLE IF NOT EXISTS "commands" (
 
 cursor_counter.execute("""CREATE TABLE IF NOT EXISTS "usage_counter" (
     "id"    INTEGER NOT NULL,
+    "month"  TEXT,
 	"name"	TEXT,
     "count"  DECIMAL,
 	PRIMARY KEY("id")
@@ -47,8 +49,38 @@ def get_all_commands():
 
     return commands_list
 
-# def update_counter(name):
+# [DEBUG]
+def update_counter(name, time):
+    month_formate = time.strftime('%Y-%m')
     
+    command_check = f"SELECT * FROM usage_counter WHERE name='{name}' AND month='{month_formate}'"
+    command_add = f"INSERT INTO usage_counter(month, name, count) VALUES ('{month_formate}', '{name}', 1)"
+    command_update = f"UPDATE usage_counter SET count=count+1 WHERE name='{name}' AND month='{month_formate}'"
+
+    if cursor_counter.execute(command_check).fetchall() == []:
+        cursor_counter.execute(command_add)
+    else:
+        cursor_counter.execute(command_update)
+        
+    connect.commit()
+    print("Update counter")
+
+# [DEBUG]
+def get_month_counter(month_formate):
+    command_check = f"SELECT * FROM usage_counter WHERE month='{month_formate}'"
+    return cursor_counter.execute(command_check).fetchall()
+    
+    
+# update_counter('小頭', datetime.datetime.today())
+# update_counter('小頭', datetime.date(2023,12,19))
+# update_counter('電烤爐', datetime.date(2023,4,19))
+# update_counter('電烤爐', datetime.date(2023,1,19))
+# update_counter('電烤爐', datetime.date(2023,1,19))
+# print(get_month_counter("2023-01"))
+# update_counter('電烤爐')
+# update_counter('電烤爐')
+# update_counter('電烤爐')
+# update_counter('電烤爐')
 
 
 
