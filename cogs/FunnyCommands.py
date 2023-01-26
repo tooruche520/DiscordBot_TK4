@@ -6,8 +6,8 @@ import modules.MyDatabase as db
 from src.Id_collection import channle_id, emoji_list, role_list
 from src.greetings_data import morning_response, night_response
 from cogs.LevelSystem import LevelSystem
-from modules.LimitCounter import add_count
 import modules.CommandsDatabase as command_db
+
 
 # | 指令       | 描述                    | 經驗值             | 備註                    |
 # | ---------- | ----------------------- | ------------------ | ----------------------- |
@@ -35,7 +35,8 @@ class FunnyCommands(commands.Cog, description="你可以用這些指令與TK4對
         log.info(f'{ctx.author} 給了TK4一根棒棒糖')
         await ctx.send(f'謝謝 {ctx.author.mention} 的棒棒糖')
         await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, 10), ctx.author)
-        # add_count(ctx.author.id)
+        # [DEBUG]
+        command_db.update_counter(ctx.command.name, ctx.message.created_at)
 
     # commands
     @commands.command(brief="跟 TK4 說早安", help="!早安\n在不同時間會有不同的反應，等你來發掘!")
