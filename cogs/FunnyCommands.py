@@ -20,6 +20,7 @@ import modules.CommandsDatabase as command_db
 
 CHANNLE_ID_LEVEL = channle_id["升等通知"]
 ROLE_HUSKY = role_list["偉大的哈士奇總裁"]
+command_reply_dict = command_db.get_reply()
 
 class FunnyCommands(commands.Cog, description="你可以用這些指令與TK4對話"):
     def __init__(self, bot):
@@ -29,7 +30,7 @@ class FunnyCommands(commands.Cog, description="你可以用這些指令與TK4對
     async def on_ready(self):
         await self.add_command_from_database()
 
-    # commands
+    # [TODO] 新增至資料庫
     @commands.command(brief="餵 TK4 一根棒棒糖", help="!棒棒糖\n可以增加 10 親密度")
     async def 棒棒糖(self, ctx):
         log.info(f'{ctx.author} 給了TK4一根棒棒糖')
@@ -38,7 +39,6 @@ class FunnyCommands(commands.Cog, description="你可以用這些指令與TK4對
         # [DEBUG]
         command_db.update_counter(ctx.command.name, ctx.message.created_at)
 
-    # commands
     @commands.command(brief="跟 TK4 說早安", help="!早安\n在不同時間會有不同的反應，等你來發掘!")
     async def 早安(self, ctx):
         log.info(f'{ctx.author} 在叫你')
@@ -48,7 +48,6 @@ class FunnyCommands(commands.Cog, description="你可以用這些指令與TK4對
         await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, 10), ctx.author)
         # add_count(ctx.author.id)
 
-    # commands
     @commands.command(brief="跟 TK4 說晚安", help="!晚安\n在不同時間會有不同的反應，等你來發掘!")
     async def 晚安(self, ctx):
         log.info(f'{ctx.author} 去睡覺了')
@@ -58,19 +57,19 @@ class FunnyCommands(commands.Cog, description="你可以用這些指令與TK4對
         await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, 10), ctx.author)
         # add_count(ctx.author.id)
 
-    # commands
+    # [TODO] 新增至資料庫
     @commands.command(brief="對小徹說尖頭拉瑞", help="你敢對小徹說尖頭??!?")
     async def 尖頭拉瑞(self, ctx):
         log.info(f'{ctx.author} 叫您尖頭拉瑞')
         await ctx.send(f'對 {ctx.author.mention} 釋放十萬伏特攻擊 -`д´-')
         
-    # commands
+    # [TODO] 新增至資料庫
     @commands.command(brief="叫一下小徹", help="!小徹\n這並不會幫你@小徹 有事請直接使用tag讓我看到")
     async def 小徹(self, ctx):
         log.info(f'{ctx.author} 在叫你')
         await ctx.send(f'{ctx.author.mention} 他在攝攝，有事請直接@小徹')
 
-    # commands
+    # [TODO] 新增至資料庫
     @commands.command(brief="摸摸TK4 uwu", help="!rua\n每日療癒")
     async def rua(self, ctx):
         log.info(f'{ctx.author} 在叫你')
@@ -129,18 +128,18 @@ class FunnyCommands(commands.Cog, description="你可以用這些指令與TK4對
     
     # [DEBUG]
     async def add_command_from_database(self):
-        commands_list = command_db.get_all_commands()
-        for command in commands_list:
-            name = command[1]
-            response = command[2]
-            brief = command[3]
-            help = command[4]
-            experience = command[5]
+        for name, info in command_reply_dict.items():
+            brief = info[1]
+            help = info[2]
             @commands.command(name=name, brief=brief, help=help)
             async def fun(ctx):
-                # log.info(f'{ctx.author} 給了TK4一根棒棒糖')
-                await ctx.send(response)
-                # await LevelSystem.send_level_up_message(ctx.bot, db.update_user_exp(ctx.author.id, exp), ctx.author)
+                command_name = ctx.command.name
+                exp = command_reply_dict[command_name][3]
+                response = command_reply_dict[command_name][0]
+                response_n = response.replace("username", f'{ctx.author.name}')
+                await ctx.send(response_n)
+                command_db.update_counter(command_name, ctx.message.timestamp, command_db.DISCORD)
+                
             self.bot.add_command(fun)
     
     # [DEBUG]

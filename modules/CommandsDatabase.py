@@ -1,14 +1,10 @@
 import sqlite3
 import logging as log
 import datetime
-# import modules.User as User
 import csv
-# from modules.LimitCounter import get_limit_count, add_count
 
-# fp = open("src/level2exp.csv", "r", encoding="utf-8")
-# csv_reader = csv.reader(fp)
-# table_level_exp = list(csv_reader)
-# fp.close()
+TWITCH = "twitch"
+DISCORD = "discord"
 
 connect = sqlite3.connect('src/database/commands.db')
 cursor_commands = connect.cursor()
@@ -26,9 +22,10 @@ cursor_commands.execute("""CREATE TABLE IF NOT EXISTS "commands" (
 
 cursor_counter.execute("""CREATE TABLE IF NOT EXISTS "usage_counter" (
     "id"    INTEGER NOT NULL,
-    "month"  TEXT,
 	"name"	TEXT,
     "count"  DECIMAL,
+    "month"  TEXT,
+    "platform"  TEXT,
 	PRIMARY KEY("id")
 )""")
 
@@ -49,13 +46,24 @@ def get_all_commands():
 
     return commands_list
 
+def get_reply():
+    commands_list = get_all_commands()
+    result = {}
+    for (id, name, response, brief, help, experience) in commands_list:
+        result.setdefault(name, []).extend([response, brief, help, experience])
+    return result   
+
+def total_count(name, platform):
+    command = f"SELECT SUM(COUNT) FROM usage_counter WHERE name='{name}' AND platform='{platform}'"
+    return cursor_counter.execute(command).fetchone()[0]
+
 # [DEBUG]
-def update_counter(name, time):
-    month_formate = time.strftime('%Y-%m')
+def update_counter(name, time, platform):
+    month_format = time.strftime('%Y-%m')
     
-    command_check = f"SELECT * FROM usage_counter WHERE name='{name}' AND month='{month_formate}'"
-    command_add = f"INSERT INTO usage_counter(month, name, count) VALUES ('{month_formate}', '{name}', 1)"
-    command_update = f"UPDATE usage_counter SET count=count+1 WHERE name='{name}' AND month='{month_formate}'"
+    command_check = f"SELECT * FROM usage_counter WHERE name='{name}' AND month='{month_format}' AND platform='{platform}'"
+    command_add = f"INSERT INTO usage_counter(name, count, month, platform) VALUES ('{name}', 1, '{month_format}', '{platform}')"
+    command_update = f"UPDATE usage_counter SET count=count+1 WHERE name='{name}' AND month='{month_format}' AND platform='{platform}'"
 
     if cursor_counter.execute(command_check).fetchall() == []:
         cursor_counter.execute(command_add)
@@ -63,20 +71,34 @@ def update_counter(name, time):
         cursor_counter.execute(command_update)
         
     connect.commit()
-    print("Update counter")
+    # print("Update counter")
 
 # [DEBUG]
-def get_month_counter(month_formate):
-    command_check = f"SELECT * FROM usage_counter WHERE month='{month_formate}'"
+def get_month_counter(month_format, platform):
+    command_check = f"SELECT * FROM usage_counter WHERE month='{month_format}' AND platform='{platform}'"
     return cursor_counter.execute(command_check).fetchall()
     
-    
-# update_counter('小頭', datetime.datetime.today())
+def make_csv(month_format, platform):
+    data = get_month_counter(month_format, platform)
+    data.sort(key = lambda x: x[2], reverse=True)
+    with open(f'每月指令統計表({platform}).csv', 'w', encoding="utf-8") as out:
+        csv_out = csv.writer(out)
+        csv_out.writerow(['id', 'name', 'count', 'date', 'platform'])
+        for row in data:
+            csv_out.writerow(row)
+
+    return True
+
+# print(get_reply())
+# update_counter('棒棒糖', datetime.datetime.today(), TWITCH)
+# print(total_count("棒棒糖", TWITCH))
 # update_counter('小頭', datetime.date(2023,12,19))
 # update_counter('電烤爐', datetime.date(2023,4,19))
 # update_counter('電烤爐', datetime.date(2023,1,19))
 # update_counter('電烤爐', datetime.date(2023,1,19))
-# print(get_month_counter("2023-01"))
+# data = get_month_counter("2023-01")
+# make_csv("2023-01", TWITCH)
+# print(dict(data))
 # update_counter('電烤爐')
 # update_counter('電烤爐')
 # update_counter('電烤爐')
