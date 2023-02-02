@@ -57,7 +57,7 @@ def total_count(name, platform):
     command = f"SELECT SUM(COUNT) FROM usage_counter WHERE name='{name}' AND platform='{platform}'"
     return cursor_counter.execute(command).fetchone()[0]
 
-# [DEBUG]
+
 def update_counter(name, time, platform):
     month_format = time.strftime('%Y-%m')
     
@@ -73,7 +73,7 @@ def update_counter(name, time, platform):
     connect.commit()
     # print("Update counter")
 
-# [DEBUG]
+
 def get_month_counter(month_format, platform):
     command_check = f"SELECT * FROM usage_counter WHERE month='{month_format}' AND platform='{platform}'"
     return cursor_counter.execute(command_check).fetchall()
