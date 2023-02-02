@@ -8,16 +8,18 @@ class CustomHelpCommand(commands.HelpCommand):
         
     async def send_bot_help(self, mapping):
         embed = discord.Embed(title="Help", color=0xFC7B0A, description="小幫手來幫你啦!\n現在可以攝影棚可以用這些指令")
+        global temp
         for cog in mapping:
-            if cog is not None:
-                command_list = [command.name for command in mapping[cog]]
-                if not command_list:
-                    command_list_data = "No command!!"
-                else:
-                    command_list_data = ", ".join(command_list)
-                    embed.add_field(name = cog.qualified_name, value = command_list_data)
-                # print (command_list)
-                # print("================================================")
+            if cog is not None and cog.qualified_name == "DebugCommand":
+                temp = cog
+                continue
+            for command in mapping[cog]:
+                if command:
+                    embed.add_field(name=f'!{command.name}', value=command.brief)
+        for command in mapping[temp]:
+                if command:
+                    embed.add_field(name=f'!{command.name}', value=command.brief)
+           
         await self.get_destination().send(embed=embed)
 
     async def send_cog_help(self, cog):
