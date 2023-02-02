@@ -121,8 +121,10 @@ class TwitchNotification(commands.Cog):
                             log.info(f'{name} has unbanned!!')
                             await channel.send(f'恭喜 {name} 解ban，歡回uwub')
                             continue
-                except Exception as e:    
-                    log.error(e.message)    
+                except Exception as e:
+                    # url = 'wss://eventsub-beta.wss.twitch.tv/ws'
+                    await new_websocket_connection(self, 'wss://eventsub-beta.wss.twitch.tv/ws', True)    
+                    log.error(e)    
         
         # async def connect_twitch_websocket():
             
