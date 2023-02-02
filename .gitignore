@@ -11,3 +11,5 @@ logs/
 .env
 src/user_data/user.db
 TODO.md
+env2
+src/database/commands.db
