@@ -52,15 +52,6 @@ class DebugCommand(commands.Cog, description="TK4開發專用除錯指令，只�
         log.info(f'Bot ended: command')
         await self.bot.close()
         
-<<<<<<< HEAD
-    
-    @commands.command(brief="重新整理使用者等級與親密度", help="!reload_user_exp")
-    async def reload_user_exp(self, ctx):
-        for guild in self.bot.guilds:
-            for member in guild.members:
-                db.reload_user_exp(member.id)
-        log.info(f'Susseccfully reloaded user exp and level from csv.')
-=======
 
     @commands.command()
     @commands.has_role(ROLE_HUSKY)
@@ -81,7 +72,6 @@ class DebugCommand(commands.Cog, description="TK4開發專用除錯指令，只�
     #         for member in guild.members:
     #             db.reload_user_exp(member.id)
     #     log.info(f'Susseccfully reloaded user exp and level from csv.')
->>>>>>> tooruche_alpha
 
 
 # 要用 async await 
