@@ -20,9 +20,9 @@ class ReactionRole(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         msg = await self.bot.get_channel(CHANNLE_ID_GET_ROLES).fetch_message(MESSAGE_ID_GET_ROLES)
-        await msg.add_reaction(str(emoji_list['tc_happy']))
-        await msg.add_reaction(str(emoji_list['tc_is_husky']))        
-        await msg.add_reaction(str(emoji_list['tc_tongue']))
+        await msg.add_reaction(str(emoji_list[':tc_happy:']))
+        await msg.add_reaction(str(emoji_list[':tc_is_husky:']))        
+        await msg.add_reaction(str(emoji_list[':tc_tongue:']))
         
     # event
     @commands.Cog.listener()
@@ -38,9 +38,9 @@ class ReactionRole(commands.Cog):
             await payload.member.add_roles(role)
             log.info(f"{payload.member} get the role {role_name}")
 
-        await add_reaction(self, payload, 'tc_happy', '普通人')
-        await add_reaction(self, payload, 'tc_is_husky', '小色鬼')
-        await add_reaction(self, payload, 'tc_tongue', '優質圖奇觀眾')
+        await add_reaction(self, payload, ':tc_happy:', '普通人')
+        await add_reaction(self, payload, ':tc_is_husky:', '小色鬼')
+        await add_reaction(self, payload, ':tc_tongue:', '優質圖奇觀眾')
 
     # event
     @commands.Cog.listener()
@@ -57,9 +57,9 @@ class ReactionRole(commands.Cog):
             await member.remove_roles(role)
             log.info(f"{member} loss the role {role_name}")
 
-        await remove_reaction(self, payload, 'tc_happy', '普通人')
-        await remove_reaction(self, payload, 'tc_is_husky', '小色鬼')
-        await remove_reaction(self, payload, 'tc_tongue', '優質圖奇觀眾')
+        await remove_reaction(self, payload, ':tc_happy:', '普通人')
+        await remove_reaction(self, payload, ':tc_is_husky:', '小色鬼')
+        await remove_reaction(self, payload, ':tc_tongue:', '優質圖奇觀眾')
 
 
 

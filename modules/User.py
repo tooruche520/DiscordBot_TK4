@@ -14,6 +14,5 @@ class User:
         self.adoption = adoption
         self.level = level
         self.experience = experience
-
     
 
