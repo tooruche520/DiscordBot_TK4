@@ -30,7 +30,7 @@ def add_command_from_database():
             response_n = response.replace("username", f'{ctx.author.name}').replace("total", str(total))
             await ctx.send(response_n)
 
-@routines.routine(seconds=10)
+@routines.routine(minutes=5)
 async def message_loop():
     message = random.choice(data)
     print(message)
