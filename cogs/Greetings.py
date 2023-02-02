@@ -19,7 +19,7 @@ class Grettings(commands.Cog):
         if member.bot:
             return;
         
-        button = Button(label="打個招呼", style=discord.ButtonStyle.green, emoji=emoji_list["tc_happy"])
+        button = Button(label="打個招呼", style=discord.ButtonStyle.green, emoji=emoji_list[":tc_happy:"])
         async def cb(interaction):
             await interaction.response.send_message(f'{interaction.user.mention} 跟你說你好', file=discord.File('src/pic/tongue.png'))
         button.callback = cb

@@ -1,0 +1,6 @@
+{
+    "python.analysis.extraPaths":[
+        "bot-venv/Lib/site-packages",
+        "venv/Lib/site-packages"
+    ]
+}
