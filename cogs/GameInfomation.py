@@ -92,7 +92,7 @@ class GameInfomation(commands.Cog):
         #     SwGameType("pokemon_sv", "https://appmedia.jp/pokemon_sv/76185673", CHANNLE_GAME_POKEMONSV),
         # )
         
-        @tasks.loop(seconds=10)
+        @tasks.loop(minutes=10)
         async def loop_get():
             # print(self.sw_game_list)
             for sw_game in self.sw_game_list:
