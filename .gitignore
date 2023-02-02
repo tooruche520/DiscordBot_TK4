@@ -12,8 +12,4 @@ logs/
 src/user_data/user.db
 TODO.md
 env2
-<<<<<<< HEAD
-src/database/commands.db
-=======
-src/user_data/user.db
->>>>>>> tooruche_alpha
+
