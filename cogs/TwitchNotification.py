@@ -7,6 +7,7 @@ import websockets
 import requests
 import json
 import asyncio
+import time
 from twitchAPI.twitch import Twitch
 from twitchAPI.oauth import UserAuthenticator
 from twitchAPI.types import AuthScope
@@ -91,7 +92,7 @@ class TwitchNotification(commands.Cog):
                         response = requests.Session().post(url, headers=API_HEADERS, json=sub_channel_follow)
                         # print(response.json())
                         log.info("Successfully created subscription.")
-                        channel = self.bot.get_channel(CHANNLE_ID_WELCOME)
+                    channel = self.bot.get_channel(CHANNLE_ID_WELCOME)
                     while True:
                         data = await websocket.recv()
                         data = json.loads(data)
@@ -121,10 +122,8 @@ class TwitchNotification(commands.Cog):
                             log.info(f'{name} has unbanned!!')
                             await channel.send(f'恭喜 {name} 解ban，歡回uwub')
                             continue
-                except Exception as e:
-                    # url = 'wss://eventsub-beta.wss.twitch.tv/ws'
-                    await new_websocket_connection(self, 'wss://eventsub-beta.wss.twitch.tv/ws', True)    
-                    log.error(e)    
+                except Exception as e:    
+                    log.error(e.message)    
         
         # async def connect_twitch_websocket():
             
@@ -228,6 +227,7 @@ class TwitchNotification(commands.Cog):
         #     await new_websocket_connection(url, True)
             
         # await connect_twitch_websocket()
+        await asyncio.sleep(15)
         url = 'wss://eventsub-beta.wss.twitch.tv/ws'
         await new_websocket_connection(self, url, True)
         
