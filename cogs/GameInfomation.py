@@ -50,7 +50,11 @@ class GameInfomation(commands.Cog):
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
                 soup = BeautifulSoup(await response.text(), "html.parser")
-                node1 = soup.find(lambda tag: tag.name=="h3" and "更新記事" in tag.text).find_next_sibling().table.tbody
+                try:
+                    node1 = soup.find(lambda tag: tag.name=="h3" and "更新記事" in tag.text).find_next_sibling().table.tbody
+                except Exception as e:
+                    log.error(e)
+                    return []
 
                 result_list = node1.find_all("tr")
 
@@ -106,6 +110,14 @@ class GameInfomation(commands.Cog):
                 
         loop_get.start()
         
+    @commands.command()
+    async def getGameNews(self, ctx):
+        for sw_game in self.sw_game_list:
+            data_list = await self.get_newest_data(sw_game)
+            channel = self.bot.get_channel(sw_game.channle_id)
+            for data in data_list:
+                print(sw_game.name, data[0], data[1], data[2])
+                await channel.send(f"【{data[0]}】{data[1]}\n{data[2]}")
     
 
 # 要用 async await 
