@@ -123,7 +123,7 @@ class TwitchNotification(commands.Cog):
                             await channel.send(f'恭喜 {name} 解ban，歡回uwub')
                             continue
                 except Exception as e:    
-                    log.error(e.message)    
+                    log.error(e)    
         
         # async def connect_twitch_websocket():
             
