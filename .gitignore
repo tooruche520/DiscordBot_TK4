@@ -12,5 +12,4 @@ logs/
 src/user_data/user.db
 TODO.md
 env2
-
 src/command_count.json

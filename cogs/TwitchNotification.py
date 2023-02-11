@@ -32,16 +32,18 @@ class TwitchNotification(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         
-        async def new_websocket_connection(self, url, isFirstTime):
+        twitch = await Twitch(TWITCH_APP_ID, TWITCH_APP_SECRET)
+        auth = UserAuthenticator(twitch, USER_SCOPE)
+        token, refresh_token = await auth.authenticate()
+        # print(token, refresh_token)
+        await twitch.set_user_authentication(token, USER_SCOPE, refresh_token)
+        
+        async def new_websocket_connection(self, url, token, isFirstTime):
             async with websockets.connect(url) as websocket:
                 try:
                     log.info("Successfully connected to webcocket.")
                     if isFirstTime:
-                        twitch = await Twitch(TWITCH_APP_ID, TWITCH_APP_SECRET)
-                        auth = UserAuthenticator(twitch, USER_SCOPE)
-                        token, refresh_token = await auth.authenticate()
-                        # print(token, refresh_token)
-                        await twitch.set_user_authentication(token, USER_SCOPE, refresh_token)
+                        
                         data = await websocket.recv()
                         data = json.loads(data)
                         # print(type(data))
@@ -103,7 +105,7 @@ class TwitchNotification(commands.Cog):
                         if(data["metadata"]["message_type"] == "session_reconnect"):
                             log.warn("Session will reconnect.")
                             new_url = data["payload"]["session"]["reconnect_url"]
-                            await new_websocket_connection(self, new_url, False)
+                            await new_websocket_connection(self, new_url, token, False)
                             break
                         sub_type = data["payload"]["subscription"]["type"]
                         if(sub_type == "channel.follow"):
@@ -124,6 +126,9 @@ class TwitchNotification(commands.Cog):
                             continue
                 except Exception as e:    
                     log.error(e)    
+                    await asyncio.sleep(10)
+                    url = 'ws://localhost:8080/eventsub'
+                    await new_websocket_connection(self, url, token, True)
         
         # async def connect_twitch_websocket():
             
@@ -229,7 +234,7 @@ class TwitchNotification(commands.Cog):
         # await connect_twitch_websocket()
         await asyncio.sleep(15)
         url = 'wss://eventsub-beta.wss.twitch.tv/ws'
-        await new_websocket_connection(self, url, True)
+        await new_websocket_connection(self, url, token, True)
         
     
 
