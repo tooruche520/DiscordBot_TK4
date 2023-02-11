@@ -32,6 +32,7 @@ class TwitchNotification(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         
+        await asyncio.sleep(10)
         twitch = await Twitch(TWITCH_APP_ID, TWITCH_APP_SECRET)
         auth = UserAuthenticator(twitch, USER_SCOPE)
         token, refresh_token = await auth.authenticate()
@@ -127,7 +128,7 @@ class TwitchNotification(commands.Cog):
                 except Exception as e:    
                     log.error(e)    
                     await asyncio.sleep(10)
-                    url = 'ws://localhost:8080/eventsub'
+                    url = 'wss://eventsub-beta.wss.twitch.tv/ws'
                     await new_websocket_connection(self, url, token, True)
         
         # async def connect_twitch_websocket():
@@ -232,7 +233,7 @@ class TwitchNotification(commands.Cog):
         #     await new_websocket_connection(url, True)
             
         # await connect_twitch_websocket()
-        await asyncio.sleep(15)
+        
         url = 'wss://eventsub-beta.wss.twitch.tv/ws'
         await new_websocket_connection(self, url, token, True)
         
