@@ -54,6 +54,16 @@ async def event_ready():
     print(f'Connected channel is | {bot.connected_channels}')
     add_command_from_database()
     
+@bot.event()
+async def event_message(message):
+    if(message.echo):
+        return 
+    greeting_list = ["安安", "晚上好", "嗨"]
+    if([greeting for greeting in greeting_list if(greeting in message.content)]):
+        if(message.first):
+            await message.channel.send(f"{message.author.name} 初見安安汪~")
+        else:
+            await message.channel.send(f"{message.author.name} 歡迎回到小徹攝影棚!")
     
 ### Commands ###
 
@@ -71,15 +81,25 @@ async def cancel(ctx: commands.Context):
     def run(ctx):
         message_loop.cancel()
     await run(ctx)
+    await ctx.send("先休息一下汪uwuノ")
+    
     
 @bot.command()
-async def bant(ctx: commands.Context):
-    user = ctx.get_user("tooruche520")
-    print(user, type(user))
-    user = ctx.author
-    print(user, type(user))
-    # await user.ban_user()
-    # print(f'ban')
+async def link(ctx, link_name):
+    command_db.update_counter("link", ctx.message.timestamp, command_db.TWITCH)
+    links_map = {
+        "github": "https://github.com/tooruche520/DiscordBot_TK4",
+        "flickr": "https://www.flickr.com/people/tooruche520/",
+        "discord": "https://discord.com/invite/HeywMdKNf5",
+        "youtube": "https://www.youtube.com/@tooruche",
+    }
+    try:
+        response = f"{link_name} 連結在此：{links_map[link_name.lower()]}"
+    except KeyError:
+        response = "好像輸入錯誤ㄌ，再檢查一下吧QQ"
+    await ctx.send(response)
+        
+
     
 bot.run()
 

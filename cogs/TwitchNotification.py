@@ -32,7 +32,7 @@ class TwitchNotification(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         
-        
+        await asyncio.sleep(10)
         twitch = await Twitch(TWITCH_APP_ID, TWITCH_APP_SECRET)
         auth = UserAuthenticator(twitch, USER_SCOPE)
         token, refresh_token = await auth.authenticate()
@@ -44,11 +44,7 @@ class TwitchNotification(commands.Cog):
                 try:
                     log.info("Successfully connected to webcocket.")
                     if isFirstTime:
-                        twitch = await Twitch(TWITCH_APP_ID, TWITCH_APP_SECRET)
-                        auth = UserAuthenticator(twitch, USER_SCOPE)
-                        token, refresh_token = await auth.authenticate()
-                        # print(token, refresh_token)
-                        await twitch.set_user_authentication(token, USER_SCOPE, refresh_token)
+                        
                         data = await websocket.recv()
                         data = json.loads(data)
                         # print(type(data))
@@ -110,7 +106,10 @@ class TwitchNotification(commands.Cog):
                         if(data["metadata"]["message_type"] == "session_reconnect"):
                             log.warn("Session will reconnect.")
                             new_url = data["payload"]["session"]["reconnect_url"]
-                            await new_websocket_connection(self, new_url, False)
+                            asyncio.create_task(new_websocket_connection(self, new_url, token, False))
+                            await asyncio.sleep(5)
+                            await websocket.close()
+                            log.info("Original Session closed!!")
                             break
                         sub_type = data["payload"]["subscription"]["type"]
                         if(sub_type == "channel.follow"):
@@ -129,17 +128,15 @@ class TwitchNotification(commands.Cog):
                             log.info(f'{name} has unbanned!!')
                             await channel.send(f'恭喜 {name} 解ban，歡回uwub')
                             continue
-                except websockets.exceptions.ConnectionClosedError as e:    
+                except Exception as e:    
                     log.error(e)    
-                    websocket.close()
                     await asyncio.sleep(10)
                     url = 'wss://eventsub-beta.wss.twitch.tv/ws'
                     await new_websocket_connection(self, url, token, True)
-                except Exception as e:   
-                    log.error(e)
+        
         
         url = 'wss://eventsub-beta.wss.twitch.tv/ws'
-        await new_websocket_connection(self, url, True)
+        await new_websocket_connection(self, url, token, True)
         
     
 
