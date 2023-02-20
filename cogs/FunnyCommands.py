@@ -83,7 +83,7 @@ class FunnyCommands(commands.Cog, description="你可以用這些指令與TK4對
         @commands.command(name=name)
         async def fun(ctx):
             await ctx.send(response)
-            await LevelSystem.send_level_up_message(ctx.bot, db.update_user_exp(ctx.author.id, exp), ctx.author)
+            await LevelSystem.send_level_up_message(ctx, db.update_user_exp(ctx.author.id, exp), ctx.author)
         self.bot.add_command(fun)
     
     
@@ -111,7 +111,7 @@ class FunnyCommands(commands.Cog, description="你可以用這些指令與TK4對
                 response = replace_emoji_dc(response)
                 response = response.replace("username", f'{ctx.author.mention}').replace("total", str(total))
                 await ctx.send(response)
-                await LevelSystem.send_level_up_message(ctx.bot, db.update_user_exp(ctx.author.id, exp), ctx.author)
+                await LevelSystem.send_level_up_message(ctx, db.update_user_exp(ctx.author.id, exp), ctx.author)
 
             self.bot.add_command(fun)
     

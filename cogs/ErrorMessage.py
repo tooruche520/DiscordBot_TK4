@@ -28,7 +28,7 @@ class ErrorMessage(commands.Cog, description="錯誤指令處理"):
             
         else:
             await ctx.send(f'窩 窩不知道這是什麼意思 {emoji_list[":tc_sad:"]}')
-            await ctx.send(error)
+            # await ctx.send(error)
             
         log.info(error)
  
