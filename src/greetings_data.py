@@ -3,6 +3,19 @@ from datetime import timedelta
 from random import choice
 from src.Id_collection import emoji_list
 
+# 需要測試
+def get_time_offset(send_time):
+    # 獲取當下UTC時間
+    utc_time = datetime.datetime.utcnow()
+
+    # 獲取主機時間与UTC時間之間的偏移量
+    local_offset = datetime.datetime.now().utcoffset()
+
+    # 計算主機與UTC的小时偏移量
+    utc_offset = local_offset.total_seconds() / 3600
+
+    return send_time + utc_offset
+
 morning_data = {
     'h0-6': 
     [
