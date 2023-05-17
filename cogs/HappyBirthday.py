@@ -1,4 +1,5 @@
 from discord.ext import commands, tasks
+import discord
 from discord.user import User
 import os
 import asyncio
@@ -10,6 +11,8 @@ import sqlite3
 
 ROLE_DEVELOPER = role_list["TK4開發團隊"]
 CHANNLE_HBD = channle_id["生日快樂"]
+EMOJI_BALL = emoji_list[":tc_ball:"]
+EMOJI_HAPPY = emoji_list[":tc_happy:"]
 
 
 # 資料庫連線設定
@@ -43,6 +46,7 @@ class HappyBirthday(commands.Cog, description="TK4祝尼生日快樂uwu"):
         c.execute("INSERT OR REPLACE INTO birthdays (user_id, name, birth_year, birth_date, show_age) VALUES (?, ?, ?, ?, ?)",
                   (user_id, name, birth_year_datetime, birth_date_datetime, show_age))
         conn.commit()
+        log.info(f"Updated birthdays: {name}")
         await ctx.send('生日資料已成功登記！')
 
 
@@ -61,10 +65,29 @@ class HappyBirthday(commands.Cog, description="TK4祝尼生日快樂uwu"):
             age = today.year - int(birth_year)
             # 傳送生日祝福訊息到指定頻道
             channel = self.bot.get_channel(CHANNLE_HBD) # 請填入你要傳送訊息的頻道ID
+            user = self.bot.get_user(user_id)
             if show_age:
-                await channel.send('祝 {} {}歲 生日快樂!!'.format(name, age))
+                await channel.send(f'祝{user.mention} {age}歲 生日快樂!!')
+                embed = discord.Embed(\
+                    title=f"{name}生日快樂!!", \
+                    description=f"今天是{name}的{age}歲生日!! \n快祝他生日快樂吧", \
+                    color=0xFC7B0A \
+                )
+                embed.add_field(name=f"{age}歲 生日快樂汪", value=f"嗷嗚~{EMOJI_BALL}", inline=False)
             else:
-                await channel.send('祝 {} 生日快樂!!'.format(name))
+                await channel.send(f'祝{user.mention} 生日快樂!!')
+                embed = discord.Embed(\
+                    title=f"{name}生日快樂!!", \
+                    description=f"今天是{name}的生日!! \n快祝他生日快樂吧", \
+                    color=0xFC7B0A \
+                )
+                embed.add_field(name=f"生日快樂汪", value=f"嗷嗚~{EMOJI_BALL}", inline=False)
+                
+            embed.set_thumbnail(url=user.avatar)
+            file = discord.File("src/pic/Heart.png", filename="heart.png")
+            embed.set_image(url="attachment://heart.png")
+            await channel.send(file=file, embed=embed)
+        
     
     @check_birthdays_loop.before_loop
     async def before_check_birthdays_loop(self):
@@ -75,8 +98,8 @@ class HappyBirthday(commands.Cog, description="TK4祝尼生日快樂uwu"):
         if then < now :
             then += timedelta(days=1)
         wait_time = (then - now).total_seconds()
-        print(now)
-        print(then)
+        # print(now)
+        # print(then)
         log.info('waiting time: {}'.format(wait_time))
         await asyncio.sleep(wait_time)
         log.info('wait time finished: {}'.format(wait_time))
