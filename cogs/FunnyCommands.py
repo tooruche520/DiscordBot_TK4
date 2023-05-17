@@ -8,6 +8,7 @@ from src.greetings_data import morning_response, night_response
 from cogs.LevelSystem import LevelSystem
 import modules.CommandsDatabase as command_db
 from modules.EmojiReplace import replace_emoji_dc
+from cogs.ExtraExp import get_extra_exp
 
 
 # | 指令       | 描述                    | 經驗值             | 備註                    |
@@ -34,35 +35,41 @@ class FunnyCommands(commands.Cog, description="你可以用這些指令與TK4對
          
     @commands.command(brief="跟 TK4 說早安", help="!早安\n在不同時間會有不同的反應，等你來發掘!")
     async def 早安(self, ctx):
+        exp = 10
         log.info(f'{ctx.author} 在叫你')
         send_time = ctx.message.created_at
         msg = await ctx.send(f'{ctx.author.mention} {morning_response(send_time)}')
+        exp = get_extra_exp(ctx, exp)
         await msg.add_reaction(emoji_list[':tc_tongue:'])
-        await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, 10), ctx.author)
+        await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, exp), ctx.author)
 
 
     @commands.command(brief="跟 TK4 說晚安", help="!晚安\n在不同時間會有不同的反應，等你來發掘!")
     async def 晚安(self, ctx):
+        exp = 10
         log.info(f'{ctx.author} 去睡覺了')
         send_time = ctx.message.created_at
         msg = await ctx.send(f'{ctx.author.mention} {night_response(send_time)}')
+        exp = get_extra_exp(ctx, exp)
         await msg.add_reaction(emoji_list[':tc_tongue:']) 
-        await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, 10), ctx.author)
+        await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, exp), ctx.author)
 
 
     @commands.command(brief="讓 TK4 幫忙送食物給小徹", help="!吃 [給小徹吃的東西]\n看你給什麼 給喜歡的可能會加比較多親密度")
     async def 吃(self, ctx, food):
         try:
+            exp = 10
             hateFood = ['多益','茄子','青椒']
             loveFood = ['香菜','布丁','咖喱']
             log.info(f'{ctx.author} 打算喂你吃 {food}')
+            exp = get_extra_exp(ctx, exp)
             if (food == ""):
                 await ctx.send(f'{ctx.author.mention} 想喂小徹什麽? {emoji_list[":tc_tongue:"]}')
             elif (food in hateFood):
                 await ctx.send(f'小徹拒絕了 {ctx.author.mention} 用 {food} 喂食 {emoji_list[":tc_angry:"]}')
             elif(food in loveFood):
                 await ctx.send(f'小徹接受了 {ctx.author.mention} 用 {food} 喂食 {emoji_list[":tc_happy:"]}')
-                await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, 10), ctx.author)
+                await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, exp), ctx.author)
             else:
                 await ctx.send(f'原來 {ctx.author.mention} 喜歡吃 {food} {emoji_list[":tc_is_husky:"]}')
         except Exception as e:
@@ -110,6 +117,7 @@ class FunnyCommands(commands.Cog, description="你可以用這些指令與TK4對
                 total = command_db.total_count(command_name, command_db.DISCORD)
                 response = replace_emoji_dc(response)
                 response = response.replace("username", f'{ctx.author.mention}').replace("total", str(total))
+                exp = get_extra_exp(ctx, exp)
                 await ctx.send(response)
                 await LevelSystem.send_level_up_message(ctx, db.update_user_exp(ctx.author.id, exp), ctx.author)
 
