@@ -13,7 +13,7 @@ bot = commands.Bot(command_prefix="!", intents=intents, help_command=CustomHelpC
 
 TK4_logger()
 config = dotenv_values(".env")
-DISCORD_BOT_TOKEN = config.get("DISCORD_BOT_TOKEN")
+DISCORD_BOT_TOKEN = config.get("DISCORD_BOT_TOKEN_BETA")
 
 @bot.event
 async def on_ready():
@@ -38,6 +38,6 @@ try:
 except KeyboardInterrupt:
     log.error(f'Bot ended: KeyboardInterrupt')
 except Exception as e:
-    log.error(f'Bot ended: {e.message}')
+    log.error(f'Bot ended: {e}')
 
 

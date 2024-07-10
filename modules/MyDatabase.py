@@ -13,7 +13,7 @@ csv_reader = csv.reader(fp)
 table_level_exp = list(csv_reader)
 fp.close()
 
-connect = sqlite3.connect('src/user_data/user.db')
+connect = sqlite3.connect('src/database/user.db')
 cursor = connect.cursor()
 
 cursor.execute("""CREATE TABLE IF NOT EXISTS "user_exp" (

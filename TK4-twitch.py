@@ -5,13 +5,13 @@ import random
 import json
 import modules.CommandsDatabase as command_db
 
-config = dotenv_values("env2")
+config = dotenv_values(".env")
 TWITCH_ACCESS_TOKEN = config.get("TWITCH_ACCESS_TOKEN")
 TWITCH_APP_SECRET = config.get("TWITCH_APP_SECRET")
 CHANNEL_NAME = ["tooruche520"]
 
 with open('src/twitch_message_data.json', "r", encoding = "utf8") as file:
-        data = json.load(file)
+    data = json.load(file)
 
 bot = commands.Bot(token=TWITCH_ACCESS_TOKEN, prefix='!', initial_channels=CHANNEL_NAME)
 command_reply_dict = command_db.get_reply()

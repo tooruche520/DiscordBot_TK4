@@ -4,6 +4,9 @@
         "venv/Lib/site-packages"
     ],
     "workbench.editorAssociations": {
-        "*.md": "default"
+        "*.md": "default",
+        "*.jpg": "imagePreview.previewEditor",
+        "*.ico": "imagePreview.previewEditor",
+        "*.db": "sqlite-viewer.view"
     }
 }
