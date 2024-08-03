@@ -1,7 +1,7 @@
 import sqlite3
 import logging as log
 
-connect = sqlite3.connect('src/database/gameinfo.db')
+connect = sqlite3.connect('database/gameinfo.db')
 cursor = connect.cursor()
 
 cursor.execute("""CREATE TABLE IF NOT EXISTS "games" (

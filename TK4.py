@@ -19,17 +19,27 @@ DISCORD_BOT_TOKEN = config.get("DISCORD_BOT_TOKEN_BETA")
 async def on_ready():
     log.info("Bot in ready")     
 
-async def load_extensions():
+async def load_extensions(bot):
+    async def load_extension_from_path(path):
+        for root, _, files in os.walk(path):
+            # Skip deprecated directory
+            if 'deprecated' in root:
+                continue
+            for filename in files:
+                if filename.endswith('.py'):
+                    ext_path = os.path.relpath(os.path.join(root, filename), path).replace(os.sep, '.')[:-3]
+                    try:
+                        await bot.load_extension(f'cogs.{ext_path}')
+                    except Exception as e:
+                        log.error(f'Failed to load extension cogs.{ext_path}\n{e}')
     try:
-        for filename in os.listdir("./cogs"):
-            if filename.endswith(".py"):
-                await bot.load_extension(f"cogs.{filename[:-3]}")
+        await load_extension_from_path("./cogs")
     except Exception as e:
         log.error(e)
 
 async def main():
     async with bot:
-        await load_extensions()
+        await load_extensions(bot)
         await bot.start(DISCORD_BOT_TOKEN)
 
 

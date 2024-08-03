@@ -2,11 +2,12 @@ from discord.ext import commands
 import discord
 import json
 import logging as log
-import modules.MyDatabase as db
+import modules.database.UserDatabase as db
 from src.Id_collection import channle_id, emoji_list, role_list
 from src.greetings_data import morning_response, night_response
+from modules.database.ResponseDatabase import get_greeting_response
 from cogs.LevelSystem import LevelSystem
-import modules.CommandsDatabase as command_db
+import modules.database.CommandsDatabase as command_db
 from modules.EmojiReplace import replace_emoji_dc
 from cogs.ExtraExp import get_extra_exp
 
@@ -38,20 +39,29 @@ class FunnyCommands(commands.Cog, description="你可以用這些指令與TK4對
         exp = 10
         log.info(f'{ctx.author} 在叫你')
         send_time = ctx.message.created_at
-        msg = await ctx.send(f'{ctx.author.mention} {morning_response(send_time)}')
+        await ctx.message.add_reaction(emoji_list[':tc_tongue:'])
+        await ctx.send(f'{ctx.author.mention} {get_greeting_response("早安", send_time)}')
         exp = get_extra_exp(ctx, exp)
-        await msg.add_reaction(emoji_list[':tc_tongue:'])
         await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, exp), ctx.author)
 
+    @commands.command(brief="跟 TK4 說午安", help="!午安\n在不同時間會有不同的反應，等你來發掘!")
+    async def 午安(self, ctx):
+        exp = 10
+        log.info(f'{ctx.author} 午安!!')
+        send_time = ctx.message.created_at
+        await ctx.message.add_reaction(emoji_list[':tc_tongue:'])
+        await ctx.send(f'{ctx.author.mention} {get_greeting_response("午安", send_time)}')
+        exp = get_extra_exp(ctx, exp)
+        await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, exp), ctx.author)
 
     @commands.command(brief="跟 TK4 說晚安", help="!晚安\n在不同時間會有不同的反應，等你來發掘!")
     async def 晚安(self, ctx):
         exp = 10
         log.info(f'{ctx.author} 去睡覺了')
         send_time = ctx.message.created_at
-        msg = await ctx.send(f'{ctx.author.mention} {night_response(send_time)}')
+        await ctx.message.add_reaction(emoji_list[':tc_tongue:'])
+        await ctx.send(f'{ctx.author.mention} {get_greeting_response("晚安", send_time)}')
         exp = get_extra_exp(ctx, exp)
-        await msg.add_reaction(emoji_list[':tc_tongue:']) 
         await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, exp), ctx.author)
 
 
@@ -89,6 +99,7 @@ class FunnyCommands(commands.Cog, description="你可以用這些指令與TK4對
     async def add_my_command(self, name, response, exp):
         @commands.command(name=name)
         async def fun(ctx):
+            log.info(response)
             await ctx.send(response)
             await LevelSystem.send_level_up_message(ctx, db.update_user_exp(ctx.author.id, exp), ctx.author)
         self.bot.add_command(fun)

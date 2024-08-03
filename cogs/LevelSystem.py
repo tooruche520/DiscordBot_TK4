@@ -3,10 +3,9 @@ import discord
 import json
 import logging as log
 from src.Id_collection import channle_id
-import modules.MyDatabase as db
 from modules.LimitCounter import clear, sub_count
-# import modules.User as User
-from modules.User import User
+import modules.database.UserDatabase as db
+from modules.database.UserDatabase import User
 
 
 CHANNLE_ID_LEVEL = channle_id["升等通知"]

@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from discord.utils import get
 from src.Id_collection import channle_id, emoji_list, role_list
-from modules.MyDatabase import edit_user_twitch_account
+from modules.database.UserDatabase import edit_user_twitch_account
 
 
 class ExtraExp(commands.Cog):

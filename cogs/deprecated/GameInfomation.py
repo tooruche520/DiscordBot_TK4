@@ -9,7 +9,7 @@ from discord.utils import get
 from src.Id_collection import channle_id, emoji_list, role_list
 from dotenv import dotenv_values
 from dataclasses import dataclass
-import modules.GameInfoDatabase as game_db
+import modules.database.GameInfoDatabase as game_db
 import aiohttp
 
 

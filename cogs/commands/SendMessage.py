@@ -3,8 +3,8 @@ import discord
 import os
 import logging as log
 from src.Id_collection import role_list, emoji_list
-import modules.MyDatabase as db
-import modules.CommandsDatabase as command_db
+import modules.database.UserDatabase as db
+import modules.database.CommandsDatabase as command_db
 from cogs.LevelSystem import LevelSystem
 
 ROLE_DEVELOPER = role_list["TK4開發團隊"]

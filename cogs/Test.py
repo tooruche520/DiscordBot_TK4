@@ -1,9 +1,9 @@
 from discord.ext import commands, tasks
 import logging as log
-import modules.MyDatabase as db
+import modules.database.UserDatabase as db
 from src.Id_collection import channle_id, emoji_list, role_list
 from cogs.LevelSystem import LevelSystem
-import modules.CommandsDatabase as command_db
+import modules.database.CommandsDatabase as command_db
 import asyncio
 
 # | 指令       | 描述                    | 經驗值             | 備註                    |

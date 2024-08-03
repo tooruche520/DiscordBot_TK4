@@ -1,19 +1,15 @@
 import sqlite3
 import logging as log
-import modules.User as User
 import csv
+from enum import IntEnum, unique
 from modules.LimitCounter import get_limit_count, add_count
-# from cogs.LevelSystem import send_level_up_message
-
-# from modules.TK4_Logger import TK4_logger
-# TK4_logger()
 
 fp = open("src/level2exp.csv", "r", encoding="utf-8")
 csv_reader = csv.reader(fp)
 table_level_exp = list(csv_reader)
 fp.close()
 
-connect = sqlite3.connect('src/database/user.db')
+connect = sqlite3.connect('database/user.db')
 cursor = connect.cursor()
 
 cursor.execute("""CREATE TABLE IF NOT EXISTS "user_exp" (
@@ -25,6 +21,22 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS "user_exp" (
     "twitch_id" TEXT,
 	PRIMARY KEY("id")
 )""")
+
+class User:
+    @unique
+    class Adoption(IntEnum):
+        GENERAL = 0
+        CHANNEL_POINTS = 1
+        BITS = 2
+        SUBSCRIBE = 3
+        VIP = 4    
+
+    def __init__(self, user_id, adoption=Adoption.GENERAL, level=0, experience=0):
+        self.user_id = user_id
+        self.adoption = adoption
+        self.level = level
+        self.experience = experience
+    
 
 def add_user(user):
     user_id = user.user_id
@@ -123,7 +135,7 @@ def get_user_by_userid(user_id):
     level = data[0][3]
     experience = data[0][5]
     # print(user_id, adoption, level, experience)
-    return User.User(user_id, adoption, level, experience)
+    return User(user_id, adoption, level, experience)
 
 
 # def update_user_exp_test(ctx, add_exp, send_level_up_message_test):

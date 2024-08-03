@@ -6,7 +6,7 @@ import csv
 TWITCH = "twitch"
 DISCORD = "discord"
 
-connect = sqlite3.connect('src/database/commands.db')
+connect = sqlite3.connect('database/commands.db')
 cursor_commands = connect.cursor()
 cursor_counter = connect.cursor()
 

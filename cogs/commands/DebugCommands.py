@@ -3,8 +3,8 @@ import discord
 import os
 import logging as log
 from src.Id_collection import role_list, emoji_list
-import modules.MyDatabase as db
-import modules.CommandsDatabase as command_db
+import modules.database.UserDatabase as db
+import modules.database.CommandsDatabase as command_db
 from cogs.LevelSystem import LevelSystem
 
 ROLE_DEVELOPER = role_list["TK4開發團隊"]
@@ -21,17 +21,42 @@ class DebugCommand(commands.Cog, description="TK4開發專用除錯指令，只�
     @commands.command(brief="重新讀取指定cog", help="!reload [指定cog名稱]")
     @commands.has_role(ROLE_DEVELOPER)
     async def reload(self, ctx, extension):
-        await self.bot.reload_extension(f"cogs.{extension}")
-        log.info(f"Completed reloading {extension}")
-        await ctx.send(f"reloaded {extension}")
+        for root, _, files in os.walk("./cogs"):
+            # Skip deprecated directory
+            if 'deprecated' in root:
+                continue
+            for filename in files:
+                if filename == f"{extension}.py":
+                    ext_path = os.path.relpath(os.path.join(root, filename), "./cogs").replace(os.sep, '.')[:-3]
+                                        
+                    try:
+                        await self.bot.reload_extension(f'cogs.{ext_path}')
+                        log.info(f"Completed reloading {extension}")
+                        await ctx.send(f"reloaded {extension}")
+                        return
+                    except Exception as e:
+                        log.error(f"Failed to reload extension cogs.{ext_path}\n{e}")
+                        await ctx.send(f"Failed to reloaded {extension}")
+                        
+        log.error(f"Failed to reload {extension}. No extension found.")
+        await ctx.send(f"Failed to reload {extension}. No extension found.")
+                
 
     # Reload all Cog in project. 
     @commands.command(brief="重新讀取所有cog", help="!reload_all")
     @commands.has_role(ROLE_DEVELOPER)
     async def reload_all(self, ctx):
-        for filename in os.listdir("./cogs"):
-            if filename.endswith(".py"):
-                await self.bot.reload_extension(f"cogs.{filename[:-3]}")
+        for root, _, files in os.walk("./cogs"):
+            # Skip deprecated directory
+            if 'deprecated' in root:
+                continue
+            for filename in files:
+                if filename.endswith('.py'):
+                    ext_path = os.path.relpath(os.path.join(root, filename), "./cogs").replace(os.sep, '.')[:-3]
+                    try:
+                        await self.bot.reload_extension(f'cogs.{ext_path}')
+                    except Exception as e:
+                        log.error(f'Failed to load extension cogs.{ext_path}\n{e}')
         log.info(f"Completed reloading all extensions.")
         await ctx.send(f"reloaded all")
 

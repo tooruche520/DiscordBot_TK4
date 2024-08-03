@@ -7,7 +7,7 @@ import logging as log
 from datetime import datetime, date, time, timedelta
 from src.Id_collection import role_list, emoji_list, channle_id
 import sqlite3
-# import modules.MyDatabase as db
+# import modules.database.UserDatabase as db
 
 ROLE_DEVELOPER = role_list["TK4開發團隊"]
 CHANNLE_HBD = channle_id["生日快樂"]
@@ -16,7 +16,7 @@ EMOJI_HAPPY = emoji_list[":tc_happy:"]
 
 
 # 資料庫連線設定
-conn = sqlite3.connect('src/database/birthday.db')
+conn = sqlite3.connect('database/birthday.db')
 c = conn.cursor()
 c.execute('''CREATE TABLE IF NOT EXISTS birthdays
              (user_id INTEGER PRIMARY KEY, name TEXT, birth_year TEXT, birth_date TEXT, show_age INTEGER)''')

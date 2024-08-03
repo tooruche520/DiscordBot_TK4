@@ -4,7 +4,6 @@ bot-venv/
 venv/
 logs/
 
-src/command_count.json
-src/database/*
+database/*
 
 TODO.md

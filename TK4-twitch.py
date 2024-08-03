@@ -3,7 +3,7 @@ from twitchio import Channel, Client, HTTPException
 from dotenv import dotenv_values
 import random 
 import json
-import modules.CommandsDatabase as command_db
+import modules.database.CommandsDatabase as command_db
 
 config = dotenv_values(".env")
 TWITCH_ACCESS_TOKEN = config.get("TWITCH_ACCESS_TOKEN")
