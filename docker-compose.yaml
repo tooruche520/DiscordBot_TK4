@@ -1,0 +1,7 @@
+version: '3.8'
+
+services:
+  tk4:
+    build: .
+    volumes:
+      - .:/app
