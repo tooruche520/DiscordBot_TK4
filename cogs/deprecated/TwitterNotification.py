@@ -4,7 +4,7 @@ import logging as log
 from discord.ext import tasks, commands
 from twitchAPI.twitch import Twitch
 from discord.utils import get
-from src.Id_collection import channle_id, emoji_list, role_list
+import modules.database.IdCollectionDatabase as ID
 from dotenv import dotenv_values
 import tweepy.asynchronous
 
@@ -14,10 +14,10 @@ TWITTER_API_KEY_SECRET = config.get("TWITTER_API_KEY_SECRET")
 TWITTER_BEARER_TOKEN = config.get("TWITTER_BEARER_TOKEN")
 TWITTER_ACCESS_TOKEN = config.get("TWITTER_ACCESS_TOKEN")
 TWITTER_ACCESS_TOKEN_SECRET = config.get("TWITTER_ACCESS_TOKEN_SECRET")
-CHANNLE_PHOTOGRAPHY_GALLERY = channle_id["攝影作品"]
-CHANNLE_TWITTER_NOTIFICATION = channle_id["貼文通知"]
-CHANNEL_FANART = channle_id["小徹粉絲繪"]
-CHANNEL_FANART_R18 = channle_id["小徹色圖"]
+CHANNEL_PHOTOGRAPHY_GALLERY = ID.get_channel_id("攝影作品")
+CHANNEL_TWITTER_NOTIFICATION = ID.get_channel_id("貼文通知")
+CHANNEL_FANART = ID.get_channel_id("小徹粉絲繪")
+CHANNEL_FANART_R18 = ID.get_channel_id("小徹色圖")
 
 TAG_NEW_FURRYPIC = "#小徹在攝攝"
 TAG_NEW_INFO = "#公告"
@@ -28,8 +28,8 @@ class TwitterNotification(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.stream_client = MyStreamingClient(TWITTER_BEARER_TOKEN, wait_on_rate_limit=True)
-        self.channel_photography_gallery = bot.get_channel(CHANNLE_PHOTOGRAPHY_GALLERY)
-        self.channel_twitter_notifaction = bot.get_channel(CHANNLE_TWITTER_NOTIFICATION)
+        self.channel_photography_gallery = bot.get_channel(CHANNEL_PHOTOGRAPHY_GALLERY)
+        self.channel_twitter_notifaction = bot.get_channel(CHANNEL_TWITTER_NOTIFICATION)
         self.channel_fanart = bot.get_channel(CHANNEL_FANART)
         self.channel_fanart_r18 = bot.get_channel(CHANNEL_FANART_R18)
         
@@ -63,25 +63,25 @@ class TwitterNotification(commands.Cog):
 
     async def on_new_pic(self, tweet):
         url = MyStreamingClient.to_url(tweet)
-        response = f"小徹發新毛毛照了，快去點讚{emoji_list[':tc_happy:']}\n{url}"
-        await self.bot.get_channel(CHANNLE_PHOTOGRAPHY_GALLERY).send(response)
+        response = f"小徹發新毛毛照了，快去點讚{ID.get_emoji_id(':tc_happy:')}\n{url}"
+        await self.bot.get_channel(CHANNEL_PHOTOGRAPHY_GALLERY).send(response)
         log.info("New PIC!!")
     
     async def on_new_info(self, tweet):
         url = MyStreamingClient.to_url(tweet)
-        response = f"小徹發新公告了，快去看看{emoji_list[':tc_tongue:']}\n{url}"
-        await self.bot.get_channel(CHANNLE_TWITTER_NOTIFICATION).send(response)
+        response = f"小徹發新公告了，快去看看{ID.get_emoji_id(':tc_tongue:')}\n{url}"
+        await self.bot.get_channel(CHANNEL_TWITTER_NOTIFICATION).send(response)
         log.info("New INFO!!")
     
     async def on_new_fanart(self, tweet):
         url = MyStreamingClient.to_url(tweet)
-        response = f"小徹有新的粉絲繪了，好棒!!!{emoji_list[':tc_is_husky:']}\n{url}"
+        response = f"小徹有新的粉絲繪了，好棒!!!{ID.get_emoji_id(':tc_is_husky:')}\n{url}"
         await self.bot.get_channel(CHANNEL_FANART).send(response)
         log.info("New FANART!!")
         
     async def on_new_fanart_R18(self, tweet):
         url = MyStreamingClient.to_url(tweet)
-        response = f"小徹有新的瑟圖了，好瑟好香ㄛ{emoji_list[':tc_sip2:']}\n{url}"
+        response = f"小徹有新的瑟圖了，好瑟好香ㄛ{ID.get_emoji_id(':tc_sip2:')}\n{url}"
         await self.bot.get_channel(CHANNEL_FANART_R18).send(response)
         log.info("New R18 FANART!!")
         

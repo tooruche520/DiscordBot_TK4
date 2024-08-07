@@ -4,9 +4,7 @@ from bs4 import BeautifulSoup
 import time
 import logging as log
 from discord.ext import tasks, commands
-from twitchAPI.twitch import Twitch
-from discord.utils import get
-from src.Id_collection import channle_id, emoji_list, role_list
+import modules.database.IdCollectionDatabase as ID
 from dotenv import dotenv_values
 from dataclasses import dataclass
 import modules.database.GameInfoDatabase as game_db
@@ -14,28 +12,28 @@ import aiohttp
 
 
 config = dotenv_values(".env")
-CHANNLE_GAME_SPLATOON = channle_id["斯普拉遁"]
-CHANNLE_GAME_POKEMONSV = channle_id["寶可夢朱紫"]
+CHANNEL_GAME_SPLATOON = ID.get_channel_id("斯普拉遁")
+CHANNEL_GAME_POKEMONSV = ID.get_channel_id("寶可夢朱紫")
 
 @dataclass
 class SwGameType:
     name: str
     og_data_title: str
-    channle_id: int
+    channel_id: int
 
 class GameInfomation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.sw_game_list = []
         self.sw_game_list.extend([
-            SwGameType("splatoon3", game_db.get_newest_title("splatoon3"), CHANNLE_GAME_SPLATOON),            
-            SwGameType("pokemon_sv", game_db.get_newest_title("pokemon_sv"), CHANNLE_GAME_POKEMONSV)]
+            SwGameType("splatoon3", game_db.get_newest_title("splatoon3"), CHANNEL_GAME_SPLATOON),            
+            SwGameType("pokemon_sv", game_db.get_newest_title("pokemon_sv"), CHANNEL_GAME_POKEMONSV)]
         )
         # self.sw_game_list.append(
-        #     SwGameType("splatoon3", "最新フェス情報 に第3回フェス結果を追加!", CHANNLE_GAME_SPLATOON)
+        #     SwGameType("splatoon3", "最新フェス情報 に第3回フェス結果を追加!", CHANNEL_GAME_SPLATOON)
         # )
         # self.sw_game_list.append(
-        #     SwGameType("pokemon_sv", "サーフゴーの育成論と対策 を公開", CHANNLE_GAME_POKEMONSV)
+        #     SwGameType("pokemon_sv", "サーフゴーの育成論と対策 を公開", CHANNEL_GAME_POKEMONSV)
         # )
         
     async def get_newest_data(self, sw_game):
@@ -92,18 +90,18 @@ class GameInfomation(commands.Cog):
     async def on_ready(self):
         # sw_game_list = []
         # sw_game_list.append(
-        #     SwGameType("splatoon3", "https://appmedia.jp/splatoon3/76335097", CHANNLE_GAME_SPLATOON), 
-        #     SwGameType("pokemon_sv", "https://appmedia.jp/pokemon_sv/76185673", CHANNLE_GAME_POKEMONSV),
+        #     SwGameType("splatoon3", "https://appmedia.jp/splatoon3/76335097", CHANNEL_GAME_SPLATOON), 
+        #     SwGameType("pokemon_sv", "https://appmedia.jp/pokemon_sv/76185673", CHANNEL_GAME_POKEMONSV),
         # )
         
         @tasks.loop(minutes=10)
         async def loop_get():
             # print(self.sw_game_list)
             for sw_game in self.sw_game_list:
-                # role = guild.get_role(sw_game.channle_id)
+                # role = guild.get_role(sw_game.channel_id)
                 # print(sw_game)
                 data_list = await self.get_newest_data(sw_game)
-                channel = self.bot.get_channel(sw_game.channle_id)
+                channel = self.bot.get_channel(sw_game.channel_id)
                 for data in data_list:
                     print(sw_game.name, data[0], data[1], data[2])
                     await channel.send(f"【{data[0]}】{data[1]}\n{data[2]}")
@@ -114,7 +112,7 @@ class GameInfomation(commands.Cog):
     async def getGameNews(self, ctx):
         for sw_game in self.sw_game_list:
             data_list = await self.get_newest_data(sw_game)
-            channel = self.bot.get_channel(sw_game.channle_id)
+            channel = self.bot.get_channel(sw_game.channel_id)
             for data in data_list:
                 print(sw_game.name, data[0], data[1], data[2])
                 await channel.send(f"【{data[0]}】{data[1]}\n{data[2]}")

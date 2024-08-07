@@ -2,13 +2,13 @@ from discord.ext import commands
 import discord
 import os
 import logging as log
-from src.Id_collection import role_list, emoji_list
+import modules.database.IdCollectionDatabase as ID
 import modules.database.UserDatabase as db
 import modules.database.CommandsDatabase as command_db
 from cogs.LevelSystem import LevelSystem
 
-ROLE_DEVELOPER = role_list["TK4開發團隊"]
-ROLE_HUSKY = role_list["偉大的哈士奇總裁"]
+ROLE_DEVELOPER = ID.get_role_id("TK4開發團隊")
+ROLE_HUSKY = ID.get_role_id("偉大的哈士奇總裁")
 
 class DebugCommand(commands.Cog, description="TK4開發專用除錯指令，只有TK4開發團隊有權限使用"):
     def __init__(self, bot):
@@ -73,7 +73,7 @@ class DebugCommand(commands.Cog, description="TK4開發專用除錯指令，只�
     @commands.command(brief="讓TK4休息一下", help="!關機睡覺")
     @commands.has_role(ROLE_DEVELOPER)
     async def 關機睡覺(self, ctx):
-        await ctx.send(f'休息時間到了咪~\n等等見囉{emoji_list[":tc_tongue:"]}')
+        await ctx.send(f'休息時間到了咪~\n等等見囉{ID.get_emoji_id(":tc_tongue:")}')
         log.info(f'Bot ended: command')
         await self.bot.close()
         

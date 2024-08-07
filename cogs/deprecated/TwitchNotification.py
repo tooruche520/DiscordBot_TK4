@@ -12,10 +12,10 @@ from twitchAPI.twitch import Twitch
 from twitchAPI.oauth import UserAuthenticator
 from twitchAPI.types import AuthScope
 from dotenv import dotenv_values
-from src.Id_collection import channle_id, emoji_list, role_list
+import modules.database.IdCollectionDatabase as ID
 from dotenv import dotenv_values
 
-CHANNLE_ID_WELCOME = channle_id["歡迎入口"]
+CHANNEL_ID_WELCOME = ID.get_channel_id["歡迎入口"]
 config = dotenv_values(".env")
 TWITCH_APP_ID = config.get("TWITCH_APP_ID")
 TWITCH_APP_SECRET = config.get("TWITCH_APP_SECRET")
@@ -95,7 +95,7 @@ class TwitchNotification(commands.Cog):
                         response = requests.Session().post(url, headers=API_HEADERS, json=sub_channel_follow)
                         # print(response.json())
                         log.info("Successfully created subscription.")
-                    channel = self.bot.get_channel(CHANNLE_ID_WELCOME)
+                    channel = self.bot.get_channel(CHANNEL_ID_WELCOME)
                     while True:
                         data = await websocket.recv()
                         data = json.loads(data)

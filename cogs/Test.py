@@ -1,7 +1,7 @@
 from discord.ext import commands, tasks
 import logging as log
 import modules.database.UserDatabase as db
-from src.Id_collection import channle_id, emoji_list, role_list
+import modules.database.IdCollectionDatabase as ID
 from cogs.LevelSystem import LevelSystem
 import modules.database.CommandsDatabase as command_db
 import asyncio
@@ -15,80 +15,59 @@ import asyncio
 # | 以下待加入 | ----------------------- | ------------------ | ----------------------- |
 # | !rua       | 摸摸TK4 uwu             | 增加 {N}           |                         |
 
-ROLE_HUSKY = role_list["偉大的哈士奇總裁"]
+ROLE_HUSKY = ID.get_role_id("偉大的哈士奇總裁")
 
 class Test(commands.Cog, description="測試用的類別"):
     def __init__(self, bot):
         self.bot = bot
-        
-    # [DEBUG] 
-    # async def on_ready(self):
-    #     # self.bot.bg_task = self.bot.loop.create_loop(self.websocket_task())
-    #     @tasks.loop(minutes=5)
-    #     async def background_task():
-    #         await asyncio.sleep(5)
-    #         log.info("Background task is running")
-    #     background_task.start()
-    # # async def websocket_task(self):
-        
-        
-    # [DEBUG]
-    # TODO: 測試沒問題就搬到 FunnyCommands.py
-    # async def is_developer(self, ctx):
-    #     if(ROLE_HUSKY not in [role.id for role in ctx.author.roles]):
-    #         await ctx.send(f"很抱歉，你沒有權限使用此指令\n若你想成為開發者貢獻一份心力，請聯絡小徹")
-    #         log.warning(f'{ctx.author} want to use dev command.')
-    #         return False
-    #     return True
-        
-    # async def add_my_command(self, name, response, exp):
-    #     @commands.command(name=name)
-    #     async def fun(ctx):
-    #         # log.info(f'{ctx.author} 給了TK4一根棒棒糖')
-    #         await ctx.send(response)
-    #         await LevelSystem.send_level_up_message(ctx.bot, db.update_user_exp(ctx.author.id, exp), ctx.author)
-    #     self.bot.add_command(fun)
     
-    # # commands
-    # @commands.command(brief="新增臨時自訂指令，現在只有總裁本人能用", help="!add_command [指令名稱] [回覆]")
-    # async def add_command(self, ctx, name, response, exp=10):
-    #     if self.is_developer(ctx):
-    #         await self.add_my_command(name, response, exp)
-    #         await ctx.send(f'Add command {name}')
-    
-    
-    # # # [debug]
-    # async def add_command_from_database(self, commands_list):
-    #     commands_list = command_db.get_all_commands()
-    #     for command in commands_list:
-    #         name = command[1]
-    #         response = command[2]
-    #         brief = command[3]
-    #         help = command[4]
-    #         experience = command[5]
-    #         @commands.command(name=name, brief=brief, help=help)
-    #         async def fun(ctx):
-    #             # log.info(f'{ctx.author} 給了TK4一根棒棒糖')
-    #             await ctx.send(response)
-    #             # await LevelSystem.send_level_up_message(ctx.bot, db.update_user_exp(ctx.author.id, exp), ctx.author)
-    #         self.bot.add_command(fun)
-    
-    # # [DEBUG]
-    # # commands
-    # @commands.command()
-    # @commands.has_role(ROLE_HUSKY)
-    # @commands.guild_only()
-    # async def EXP(self, ctx, exp):
-    #     await LevelSystem.send_level_up_message(ctx.bot, db.update_user_exp(ctx.author.id, int(exp)), ctx.author)
-    #     await ctx.send(f'Add {ctx.author.mention} {exp} exp!')
+    @commands.Cog.listener()
+    async def on_ready(self):
+        guild = self.bot.get_guild(1028268840112640100)
+        guild_emojis = guild.emojis
         
+        database_emojis = ID.get_emoji_data()
+        
+        # 將資料庫中的emoji轉換為字典，方便查找
+        database_emoji_dict = {emoji[0]: emoji[1] for emoji in database_emojis}
+
+        for emoji in guild_emojis:
+            emoji_name = f':{emoji.name}:'
+            emoji_id = str(emoji)
+
+            if emoji_name not in database_emoji_dict:
+                ID.add_emoji(emoji_name, emoji_id)
+                log.info(f"新增表符成功 {emoji_name} ({emoji_id})")
+            # else:
+            #     log.info(f"Emoji {emoji_name} already exists in the database.")
+        
+    @commands.Cog.listener()
+    async def on_guild_emojis_update(self, guild, before, after):
+        before_emojis = set(before)
+        after_emojis = set(after)
+
+        # Determine added and removed emojis
+        added = after_emojis - before_emojis
+        removed = before_emojis - after_emojis
+
+        if added:
+            for emoji in added:
+                ID.add_emoji(f':{emoji.name}:', str(emoji))
+                log.info(f"新增表符成功 :{emoji.name}: ({emoji})")
+        if removed:
+            for emoji in removed:
+                ID.delete_emoji(str(emoji))
+                log.info(f"刪除表符成功 :{emoji.name}: ({emoji})")
+
+        # Determine modified emojis
+        for emoji in after_emojis & before_emojis:
+            before_emoji = next(e for e in before if e.id == emoji.id)
+            after_emoji = next(e for e in after if e.id == emoji.id)
+            if before_emoji.name != after_emoji.name:
+                ID.edit_emoji(f':{before_emoji.name}:', f':{after_emoji.name}:', str(after_emoji))
+                log.info(f"表符名稱變更 :{before_emoji.name}: -> :{after_emoji.name}: ({before_emoji} -> {after_emoji})")
             
-    async def on_tweet(self, url):
-        await self.get_destination().send("小徹發新照片拉~快去點個讚吧uwu\n"+url)
-                
-    async def on_tweet_callback(url ,callback):
-        callback(url)     
-    
+
     
            
 # 要用 async await 

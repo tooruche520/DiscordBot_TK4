@@ -4,14 +4,13 @@
 
 
 from discord.ext import commands 
-import discord
-import json
+
 import logging as log
-from src.Id_collection import channle_id, message_id, emoji_list, role_list
+import modules.database.IdCollectionDatabase as ID
 
 
-CHANNLE_ID_GET_ROLES = channle_id['領取身分組']
-MESSAGE_ID_GET_ROLES = message_id['領取身分組訊息']
+CHANNEL_ID_GET_ROLES = ID.get_channel_id('領取身分組')
+MESSAGE_ID_GET_ROLES = ID.get_message_id('領取身分組訊息')
 
 class ReactionRole(commands.Cog):
     def __init__(self, bot):
@@ -19,10 +18,10 @@ class ReactionRole(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        msg = await self.bot.get_channel(CHANNLE_ID_GET_ROLES).fetch_message(MESSAGE_ID_GET_ROLES)
-        await msg.add_reaction(str(emoji_list[':tc_happy:']))
-        await msg.add_reaction(str(emoji_list[':tc_is_husky:']))        
-        await msg.add_reaction(str(emoji_list[':tc_tongue:']))
+        msg = await self.bot.get_channel(CHANNEL_ID_GET_ROLES).fetch_message(MESSAGE_ID_GET_ROLES)
+        await msg.add_reaction(str(ID.get_emoji_id(':tc_happy:')))
+        await msg.add_reaction(str(ID.get_emoji_id(':tc_is_husky:')))        
+        await msg.add_reaction(str(ID.get_emoji_id(':tc_tongue:')))
         
     # event
     @commands.Cog.listener()
@@ -31,10 +30,10 @@ class ReactionRole(commands.Cog):
             return
 
         async def add_reaction(self, payload, emoji_name, role_name):
-            if str(payload.emoji) != str(emoji_list[emoji_name]):
+            if str(payload.emoji) != str(ID.get_emoji_id(emoji_name)):
                 return
             guild = self.bot.get_guild(payload.guild_id)
-            role = guild.get_role(int(role_list[role_name]))
+            role = guild.get_role(int(ID.get_role_id(role_name)))
             await payload.member.add_roles(role)
             log.info(f"{payload.member} get the role {role_name}")
 
@@ -49,10 +48,10 @@ class ReactionRole(commands.Cog):
             return
 
         async def remove_reaction(self, payload, emoji_name, role_name):
-            if str(payload.emoji) != str(emoji_list[emoji_name]):
+            if str(payload.emoji) != str(ID.get_emoji_id(emoji_name)):
                 return
             guild = self.bot.get_guild(payload.guild_id)
-            role = guild.get_role(int(role_list[role_name]))
+            role = guild.get_role(int(ID.get_role_id(role_name)))
             member = guild.get_member(payload.user_id)
             await member.remove_roles(role)
             log.info(f"{member} loss the role {role_name}")

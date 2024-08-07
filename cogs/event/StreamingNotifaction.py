@@ -6,15 +6,15 @@ import logging as log
 from discord.ext import tasks, commands
 from twitchAPI.twitch import Twitch
 from discord.utils import get
-from src.Id_collection import channle_id, emoji_list, role_list
+import modules.database.IdCollectionDatabase as ID
 from dotenv import dotenv_values
 
 config = dotenv_values(".env")
 TWITCH_APP_ID = config.get("TWITCH_APP_ID")
 TWITCH_APP_SECRET = config.get("TWITCH_APP_SECRET")
-CHANNLE_ID_NOTIFICATION = channle_id['開台通知']
-ROLE_NOTIFIACTION = role_list['優質圖奇觀眾']
-EMOJI_TC_HAPPY = emoji_list[':tc_happy:']
+CHANNEL_ID_NOTIFICATION = ID.get_channel_id('開台通知')
+ROLE_NOTIFIACTION = ID.get_role_id('優質圖奇觀眾')
+EMOJI_TC_HAPPY = ID.get_emoji_id(':tc_happy:')
 
 class StreamingNotifaction(commands.Cog):
     def __init__(self, bot):
@@ -83,7 +83,7 @@ class StreamingNotifaction(commands.Cog):
                 if current_start_time != self.last_started_at:
                     self.last_started_at = current_start_time
                     embed = await self.embed_notification(response)
-                    channel = self.bot.get_channel(CHANNLE_ID_NOTIFICATION)
+                    channel = self.bot.get_channel(CHANNEL_ID_NOTIFICATION)
                     await channel.send(content=f"{role.mention} 小徹開台啦! 快來跟小徹一起玩吧{EMOJI_TC_HAPPY}", embed=embed)
                     log.info(f"{twitch_name} started streaming. Sending a notification.")
 

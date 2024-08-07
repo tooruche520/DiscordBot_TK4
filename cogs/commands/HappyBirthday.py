@@ -5,14 +5,13 @@ import os
 import asyncio
 import logging as log
 from datetime import datetime, date, time, timedelta
-from src.Id_collection import role_list, emoji_list, channle_id
+import modules.database.IdCollectionDatabase as ID
 import sqlite3
 # import modules.database.UserDatabase as db
 
-ROLE_DEVELOPER = role_list["TK4開發團隊"]
-CHANNLE_HBD = channle_id["生日快樂"]
-EMOJI_BALL = emoji_list[":tc_ball:"]
-EMOJI_HAPPY = emoji_list[":tc_happy:"]
+ROLE_DEVELOPER = ID.get_role_id("TK4開發團隊")
+CHANNEL_HBD = ID.get_channel_id("生日快樂")
+EMOJI_BALL = ID.get_emoji_id(":tc_ball:")
 
 
 # 資料庫連線設定
@@ -64,7 +63,7 @@ class HappyBirthday(commands.Cog, description="TK4祝尼生日快樂uwu"):
             # 計算年齡
             age = today.year - int(birth_year)
             # 傳送生日祝福訊息到指定頻道
-            channel = self.bot.get_channel(CHANNLE_HBD) # 請填入你要傳送訊息的頻道ID
+            channel = self.bot.get_channel(CHANNEL_HBD) # 請填入你要傳送訊息的頻道ID
             user = self.bot.get_user(user_id)
             if show_age:
                 await channel.send(f'祝{user.mention} {age}歲 生日快樂!!')

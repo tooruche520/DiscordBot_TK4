@@ -1,14 +1,12 @@
 from discord.ext import tasks, commands 
-import discord
-import json
 import logging as log
-from src.Id_collection import channle_id
+import modules.database.IdCollectionDatabase as ID
 from modules.LimitCounter import clear, sub_count
 import modules.database.UserDatabase as db
 from modules.database.UserDatabase import User
 
 
-CHANNLE_ID_LEVEL = channle_id["升等通知"]
+CHANNEL_ID_LEVEL = ID.get_channel_id("升等通知")
 
 class LevelSystem(commands.Cog, description="TK4愛你系統"):
     def __init__(self, bot):
@@ -16,7 +14,7 @@ class LevelSystem(commands.Cog, description="TK4愛你系統"):
 
     async def send_level_up_message(self, is_upgrade, user):
         if(is_upgrade):
-            channel = self.bot.get_channel(CHANNLE_ID_LEVEL)
+            channel = self.bot.get_channel(CHANNEL_ID_LEVEL)
             user_data = db.get_user_by_userid(user.id)
             level = user_data.level
             await channel.send(f'跟 {user.mention} 的好感度達到了 {level} 級!!')
@@ -24,7 +22,7 @@ class LevelSystem(commands.Cog, description="TK4愛你系統"):
     
     # async def send_level_up_message_test(self, is_upgrade, level, user):
     #     if(is_upgrade):
-    #         channel = self.bot.get_channel(CHANNLE_ID_LEVEL)
+    #         channel = self.bot.get_channel(CHANNEL_ID_LEVEL)
     #         # user_data = user
     #         # level = user_data.level
     #         await channel.send(f'{user.mention} 升到了第{level}等')

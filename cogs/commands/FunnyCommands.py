@@ -1,13 +1,10 @@
 from discord.ext import commands 
-import discord
-import json
 import logging as log
 import modules.database.UserDatabase as db
-from src.Id_collection import channle_id, emoji_list, role_list
-from src.greetings_data import morning_response, night_response
+import modules.database.CommandsDatabase as command_db
+import modules.database.IdCollectionDatabase as ID
 from modules.database.ResponseDatabase import get_greeting_response
 from cogs.LevelSystem import LevelSystem
-import modules.database.CommandsDatabase as command_db
 from modules.EmojiReplace import replace_emoji_dc
 from cogs.ExtraExp import get_extra_exp
 
@@ -21,8 +18,8 @@ from cogs.ExtraExp import get_extra_exp
 # | 以下待加入 | ----------------------- | ------------------ | ----------------------- |
 # | !rua       | 摸摸TK4 uwu             | 增加 {N}           |                         |
 
-CHANNLE_ID_LEVEL = channle_id["升等通知"]
-ROLE_HUSKY = role_list["偉大的哈士奇總裁"]
+CHANNEL_ID_LEVEL = ID.get_channel_id("升等通知")
+ROLE_HUSKY = ID.get_role_id("偉大的哈士奇總裁")
 command_reply_dict = command_db.get_reply()
 
 class FunnyCommands(commands.Cog, description="你可以用這些指令與TK4對話"):
@@ -39,7 +36,7 @@ class FunnyCommands(commands.Cog, description="你可以用這些指令與TK4對
         exp = 10
         log.info(f'{ctx.author} 在叫你')
         send_time = ctx.message.created_at
-        await ctx.message.add_reaction(emoji_list[':tc_tongue:'])
+        await ctx.message.add_reaction(ID.get_emoji_id(':tc_tongue:'))
         await ctx.send(f'{ctx.author.mention} {get_greeting_response("早安", send_time)}')
         exp = get_extra_exp(ctx, exp)
         await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, exp), ctx.author)
@@ -49,7 +46,7 @@ class FunnyCommands(commands.Cog, description="你可以用這些指令與TK4對
         exp = 10
         log.info(f'{ctx.author} 午安!!')
         send_time = ctx.message.created_at
-        await ctx.message.add_reaction(emoji_list[':tc_tongue:'])
+        await ctx.message.add_reaction(ID.get_emoji_id(':tc_tongue:'))
         await ctx.send(f'{ctx.author.mention} {get_greeting_response("午安", send_time)}')
         exp = get_extra_exp(ctx, exp)
         await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, exp), ctx.author)
@@ -59,7 +56,7 @@ class FunnyCommands(commands.Cog, description="你可以用這些指令與TK4對
         exp = 10
         log.info(f'{ctx.author} 去睡覺了')
         send_time = ctx.message.created_at
-        await ctx.message.add_reaction(emoji_list[':tc_tongue:'])
+        await ctx.message.add_reaction(ID.get_emoji_id(':tc_tongue:'))
         await ctx.send(f'{ctx.author.mention} {get_greeting_response("晚安", send_time)}')
         exp = get_extra_exp(ctx, exp)
         await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, exp), ctx.author)
@@ -74,14 +71,14 @@ class FunnyCommands(commands.Cog, description="你可以用這些指令與TK4對
             log.info(f'{ctx.author} 打算喂你吃 {food}')
             exp = get_extra_exp(ctx, exp)
             if (food == ""):
-                await ctx.send(f'{ctx.author.mention} 想喂小徹什麽? {emoji_list[":tc_tongue:"]}')
+                await ctx.send(f'{ctx.author.mention} 想喂小徹什麽? {ID.get_emoji_id(":tc_tongue:")}')
             elif (food in hateFood):
-                await ctx.send(f'小徹拒絕了 {ctx.author.mention} 用 {food} 喂食 {emoji_list[":tc_angry:"]}')
+                await ctx.send(f'小徹拒絕了 {ctx.author.mention} 用 {food} 喂食 {ID.get_emoji_id(":tc_angry:")}')
             elif(food in loveFood):
-                await ctx.send(f'小徹接受了 {ctx.author.mention} 用 {food} 喂食 {emoji_list[":tc_happy:"]}')
+                await ctx.send(f'小徹接受了 {ctx.author.mention} 用 {food} 喂食 {ID.get_emoji_id(":tc_happy:")}')
                 await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, exp), ctx.author)
             else:
-                await ctx.send(f'原來 {ctx.author.mention} 喜歡吃 {food} {emoji_list[":tc_is_husky:"]}')
+                await ctx.send(f'原來 {ctx.author.mention} 喜歡吃 {food} {ID.get_emoji_id(":tc_is_husky:")}')
         except Exception as e:
             await ctx.send(f'AAA')
             log.error(f'Error: {e}')

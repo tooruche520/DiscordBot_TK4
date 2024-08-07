@@ -2,13 +2,13 @@ from discord.ext import commands
 import discord
 import os
 import logging as log
-from src.Id_collection import role_list, emoji_list
+import modules.database.IdCollectionDatabase as ID
 import modules.database.UserDatabase as db
 import modules.database.CommandsDatabase as command_db
 from cogs.LevelSystem import LevelSystem
 
-ROLE_DEVELOPER = role_list["TK4開發團隊"]
-ROLE_HUSKY = role_list["偉大的哈士奇總裁"]
+ROLE_DEVELOPER = ID.get_role_id("TK4開發團隊")
+ROLE_HUSKY = ID.get_role_id("偉大的哈士奇總裁")
 
 class SendMessage(commands.Cog, description="TK4開發專用除錯指令，只有TK4開發團隊有權限使用"):
     def __init__(self, bot):
