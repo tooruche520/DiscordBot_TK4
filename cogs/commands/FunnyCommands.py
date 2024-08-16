@@ -1,5 +1,6 @@
 from discord.ext import commands 
 import logging as log
+import re
 import modules.database.UserDatabase as db
 import modules.database.CommandsDatabase as command_db
 import modules.database.IdCollectionDatabase as ID
@@ -93,7 +94,7 @@ class FunnyCommands(commands.Cog, description="你可以用這些指令與TK4對
             await message.channel.send('叫我咪?')
             
             
-    async def add_my_command(self, name, response, exp):
+    async def add_my_command(self, name, response, brief, help, exp):
         @commands.command(name=name)
         async def fun(ctx):
             log.info(response)
@@ -105,11 +106,12 @@ class FunnyCommands(commands.Cog, description="你可以用這些指令與TK4對
     # commands
     @commands.has_role(ROLE_HUSKY)
     @commands.guild_only()
-    @commands.command(brief="新增臨時自訂指令，現在只有總裁本人能用", help="!add_command [指令名稱] [回覆]")
-    async def add_command(self, ctx, name, response, exp=10):
-        await self.add_my_command(name, response, exp)
+    @commands.command(brief="新增臨時自訂指令，現在只有總裁本人能用", help="!add_command [指令名稱] [回覆] [說明] [幫助] [經驗值]")
+    async def add_command(self, ctx, name, response, brief="", help="", exp=10):
+        await self.add_my_command(name, response, brief, help, exp)
+        response = re.sub(r'<(:\w+?:)\d+>', r'\1', response)
+        command_db.add_command(name, response, brief, help, exp)
         await ctx.send(f'Add command {name}')
-        print(self.add_command.cog_name)
     
     
     async def add_command_from_database(self):
