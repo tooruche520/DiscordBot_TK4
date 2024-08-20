@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from datetime import timedelta
 import pytz
 from random import choice
-from modules.EmojiReplace import replace_emoji_dc
+from modules.EmojiReplace import replace_emoji
 
 import logging as log
 
@@ -33,7 +33,7 @@ session = Session()
 
 # 函數
 # 打招呼回應 (!早安、!晚安)
-def get_greeting_response(command, send_time):
+async def get_greeting_response(ctx, command, send_time):
     # 定義台北時區
     tz_taipei = pytz.timezone('Asia/Taipei')
 
@@ -54,6 +54,6 @@ def get_greeting_response(command, send_time):
     appropriate_greetings = list(filtered_greetings)
     
     if appropriate_greetings:
-        return replace_emoji_dc(choice(appropriate_greetings).Response)
+        return await replace_emoji(ctx, choice(appropriate_greetings).Response)
     else:
         return "ERROR"

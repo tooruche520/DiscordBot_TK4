@@ -6,7 +6,7 @@ import modules.database.CommandsDatabase as command_db
 import modules.database.IdCollectionDatabase as ID
 from modules.database.ResponseDatabase import get_greeting_response
 from cogs.LevelSystem import LevelSystem
-from modules.EmojiReplace import replace_emoji_dc
+from modules.EmojiReplace import replace_emoji
 from cogs.ExtraExp import get_extra_exp
 
 
@@ -38,7 +38,7 @@ class FunnyCommands(commands.Cog, description="你可以用這些指令與TK4對
         log.info(f'{ctx.author} 在叫你')
         send_time = ctx.message.created_at
         await ctx.message.add_reaction(ID.get_emoji_id(':tc_tongue:'))
-        await ctx.send(f'{ctx.author.mention} {get_greeting_response("早安", send_time)}')
+        await ctx.send(f'{ctx.author.mention} {await get_greeting_response(ctx, "早安", send_time)}')
         exp = get_extra_exp(ctx, exp)
         await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, exp), ctx.author)
 
@@ -48,7 +48,7 @@ class FunnyCommands(commands.Cog, description="你可以用這些指令與TK4對
         log.info(f'{ctx.author} 午安!!')
         send_time = ctx.message.created_at
         await ctx.message.add_reaction(ID.get_emoji_id(':tc_tongue:'))
-        await ctx.send(f'{ctx.author.mention} {get_greeting_response("午安", send_time)}')
+        await ctx.send(f'{ctx.author.mention} {await get_greeting_response(ctx, "午安", send_time)}')
         exp = get_extra_exp(ctx, exp)
         await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, exp), ctx.author)
 
@@ -58,7 +58,7 @@ class FunnyCommands(commands.Cog, description="你可以用這些指令與TK4對
         log.info(f'{ctx.author} 去睡覺了')
         send_time = ctx.message.created_at
         await ctx.message.add_reaction(ID.get_emoji_id(':tc_tongue:'))
-        await ctx.send(f'{ctx.author.mention} {get_greeting_response("晚安", send_time)}')
+        await ctx.send(f'{ctx.author.mention} {await get_greeting_response(ctx, "晚安", send_time)}')
         exp = get_extra_exp(ctx, exp)
         await LevelSystem.send_level_up_message(self, db.update_user_exp(ctx.author.id, exp), ctx.author)
 
@@ -125,11 +125,12 @@ class FunnyCommands(commands.Cog, description="你可以用這些指令與TK4對
                 exp = command_reply_dict[command_name][3]
                 response = command_reply_dict[command_name][0]
                 total = command_db.total_count(command_name, command_db.DISCORD)
-                response = replace_emoji_dc(response)
+                response = await replace_emoji(ctx, response)
                 response = response.replace("username", f'{ctx.author.mention}').replace("total", str(total))
                 exp = get_extra_exp(ctx, exp)
                 await ctx.send(response)
                 await LevelSystem.send_level_up_message(ctx, db.update_user_exp(ctx.author.id, exp), ctx.author)
+                log.info(f'Command "{command_name}" called!')
 
             self.bot.add_command(fun)
     
