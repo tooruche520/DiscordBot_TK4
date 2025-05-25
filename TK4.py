@@ -13,7 +13,7 @@ bot = commands.Bot(command_prefix="!", intents=intents, help_command=CustomHelpC
 
 TK4_logger()
 config = dotenv_values(".env")
-DISCORD_BOT_TOKEN = config.get("DISCORD_BOT_TOKEN_BETA")
+DISCORD_BOT_TOKEN = config.get("DISCORD_BOT_TOKEN")
 
 @bot.event
 async def on_ready():
