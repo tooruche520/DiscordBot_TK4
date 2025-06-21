@@ -27,7 +27,7 @@ class HappyBirthday(commands.Cog, description="TK4祝尼生日快樂uwu"):
         self.check_birthdays_loop.start()
         
 
-    @commands.command(name='生日', help='登記生日：!生日 生日(YYYY-MM-DD) 是否公開歲數(Y/N)')
+    @commands.command(brief="登記生日，讓TK4祝尼生日快樂uwu", name='生日', help='登記生日：!生日 生日(YYYY-MM-DD) 是否公開歲數(Y/N)')
     async def add_birthday(self, ctx, birth_date: str, show_age: str):
         user_id = ctx.author.id
         name = ctx.author.name
