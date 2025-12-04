@@ -42,6 +42,7 @@ class DebugCommand(commands.Cog, description="TK4開發專用除錯指令，只�
         await ctx.send(f"Failed to reload {extension}. No extension found.")
                 
 
+    #TODO: reload之後無法重新讀取command 
     # Reload all Cog in project. 
     @commands.command(brief="重新讀取所有cog", help="!reload_all")
     @commands.has_role(ROLE_DEVELOPER)
