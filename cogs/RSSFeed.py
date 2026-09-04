@@ -6,12 +6,14 @@ import logging as log
 from datetime import datetime
 from google import genai
 from dotenv import load_dotenv
+from modules.AsyncExternal import ExternalIOError, run_blocking_io
 load_dotenv()
 
 # The client gets the API key from the environment variable `GEMINI_API_KEY`.
 client = genai.Client()
 
 TEST_CHANNEL = 1028924185692618792
+EXTERNAL_IO_TIMEOUT = 30.0
 
 # --- 設定 ---
 # 這裡定義每個 RSS Feed 的專屬設定 (額外資料)
@@ -80,7 +82,11 @@ class RSSFeed(commands.Cog):
         log.info("[RSS] 正在檢查 RSS 更新...")
         try:
             # 1. 更新所有訂閱源 (下載最新內容)
-            self.reader.update_feeds()
+            await run_blocking_io(
+                self.reader.update_feeds,
+                operation_name="RSS feed update",
+                timeout=EXTERNAL_IO_TIMEOUT,
+            )
             
             # 2. 針對每個訂閱源，只檢查最新的一筆
             for feed_url in FEED_CONFIG.keys():
@@ -133,9 +139,19 @@ class RSSFeed(commands.Cog):
             f"{title}\n{summary}"
         )
         
-        translated_content = client.models.generate_content(
-            model="gemini-2.5-flash-lite", contents=prompt
-        ).text
+        try:
+            response = await run_blocking_io(
+                lambda: client.models.generate_content(
+                    model="gemini-2.5-flash-lite", contents=prompt
+                ),
+                operation_name=f"Gemini translation for {title}",
+                timeout=EXTERNAL_IO_TIMEOUT,
+            )
+        except ExternalIOError as e:
+            log.error(f"[RSS] Gemini 翻譯失敗 ({title}): {e}")
+            raise
+
+        translated_content = response.text
 
         # 準備訊息內容
         translated_content = translated_content.replace('## ', f'## {emoji} ')
