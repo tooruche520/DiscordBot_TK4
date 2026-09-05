@@ -70,6 +70,10 @@ def update_user_exp(user_id, add_exp):
     command = "UPDATE user_exp "
     user = get_user_by_userid(user_id)
     if(user == None):
+        add_user(User(user_id))
+        user = get_user_by_userid(user_id)
+
+    if(user == None):
         log.error(f"Cannot get user data from database.")
         return False
 
@@ -123,19 +127,14 @@ def delete_user(user):
 
 
 def get_user_by_userid(user_id):
-    command = f"SELECT * FROM user_exp WHERE user_id='{user_id}'"
+    command = f"SELECT user_id, adoption, level, experience FROM user_exp WHERE user_id='{user_id}'"
     cursor.execute(command)
     data = cursor.fetchall()
 
     if(data == []):
         return None
 
-    user_id = data[0][1]
-    adoption = data[0][2]
-    level = data[0][3]
-    experience = data[0][5]
-    # print(user_id, adoption, level, experience)
-    return User(user_id, adoption, level, experience)
+    return User(*data[0])
 
 
 # def update_user_exp_test(ctx, add_exp, send_level_up_message_test):
