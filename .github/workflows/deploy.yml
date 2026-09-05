@@ -1,15 +1,26 @@
 name: Deploy TK4
 
 on:
+  push:
+    branches:
+      - main
+
+  # 保留手動部署功能
   workflow_dispatch:
 
 permissions:
   contents: read
 
+# 避免同時進行兩次部署
+concurrency:
+  group: tk4-production-deploy
+  cancel-in-progress: false
+
 jobs:
   deploy:
     name: Deploy to VPS
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Configure SSH
@@ -22,9 +33,15 @@ jobs:
           printf '%s\n' "${{ secrets.VPS_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
+          # 確認 private key 可以正常解析
+          ssh-keygen -y -f ~/.ssh/id_ed25519 > /dev/null
+
       - name: Deploy
         run: |
           ssh \
+            -T \
+            -o BatchMode=yes \
+            -o ConnectTimeout=10 \
             -i ~/.ssh/id_ed25519 \
             -p "${{ vars.VPS_PORT }}" \
             "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" \
@@ -38,9 +55,48 @@ jobs:
           git pull --ff-only origin main
 
           echo "==> Rebuild and restart containers"
-          docker compose up -d --build --force-recreate --remove-orphans
+          docker compose up \
+            -d \
+            --build \
+            --force-recreate \
+            --remove-orphans
+
+          echo "==> Waiting for TK4 to start"
+          sleep 8
 
           echo "==> Container status"
           docker compose ps
+
+          echo "==> Checking TK4 container"
+
+          CONTAINER_ID="$(docker compose ps -q tk4)"
+
+          if [ -z "$CONTAINER_ID" ]; then
+            echo "❌ TK4 container was not created."
+            echo ""
+            echo "==> Docker Compose status"
+            docker compose ps -a
+            echo ""
+            echo "==> Recent logs"
+            docker compose logs --tail=100 tk4
+            exit 1
+          fi
+
+          STATUS="$(docker inspect -f '{{.State.Status}}' "$CONTAINER_ID")"
+
+          if [ "$STATUS" != "running" ]; then
+            echo "❌ TK4 container is not running."
+            echo "Container status: $STATUS"
+            echo ""
+            echo "==> Docker Compose status"
+            docker compose ps -a
+            echo ""
+            echo "==> Recent logs"
+            docker compose logs --tail=100 tk4
+            exit 1
+          fi
+
+          echo "✅ TK4 deployed successfully."
+          echo "Container status: $STATUS"
 
           EOF
