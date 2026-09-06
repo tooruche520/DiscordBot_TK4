@@ -1,5 +1,6 @@
 from discord.ext import commands, tasks
 import discord
+from contextlib import closing
 from discord.user import User
 import os
 import asyncio
@@ -59,35 +60,48 @@ class HappyBirthday(commands.Cog, description="TK4祝尼生日快樂uwu"):
         c.execute(f"SELECT * FROM birthdays WHERE birth_date='{today_date}'")
         birthdays = c.fetchall()
         log.info(birthdays)
+        channel = self.bot.get_channel(CHANNEL_HBD)
+        if channel is None:
+            log.error("Birthday notification channel unavailable: channel_id=%s", CHANNEL_HBD)
+            return
+
         for user_id, name, birth_year, birth_date, show_age in birthdays:
-            # 計算年齡
-            age = today.year - int(birth_year)
-            # 傳送生日祝福訊息到指定頻道
-            channel = self.bot.get_channel(CHANNEL_HBD) # 請填入你要傳送訊息的頻道ID
-            user = self.bot.get_user(user_id)
-            if show_age:
-                await channel.send(f'祝{user.mention} {age}歲 生日快樂!!')
-                embed = discord.Embed(\
-                    title=f"{name}生日快樂!!", \
-                    description=f"今天是{name}的{age}歲生日!! \n快祝他生日快樂吧", \
-                    color=0xFC7B0A \
+            try:
+                # 計算年齡
+                age = today.year - int(birth_year)
+                # 傳送生日祝福訊息到指定頻道
+                user = self.bot.get_user(user_id)
+                mention = user.mention if user is not None else f"<@{user_id}>"
+                if show_age:
+                    await channel.send(f'祝{mention} {age}歲 生日快樂!!')
+                    embed = discord.Embed(\
+                        title=f"{name}生日快樂!!", \
+                        description=f"今天是{name}的{age}歲生日!! \n快祝他生日快樂吧", \
+                        color=0xFC7B0A \
+                    )
+                    embed.add_field(name=f"{age}歲 生日快樂汪", value=f"嗷嗚~{EMOJI_BALL}", inline=False)
+                else:
+                    await channel.send(f'祝{mention} 生日快樂!!')
+                    embed = discord.Embed(\
+                        title=f"{name}生日快樂!!", \
+                        description=f"今天是{name}的生日!! \n快祝他生日快樂吧", \
+                        color=0xFC7B0A \
+                    )
+                    embed.add_field(name=f"生日快樂汪", value=f"嗷嗚~{EMOJI_BALL}", inline=False)
+
+                if user is not None:
+                    embed.set_thumbnail(url=user.display_avatar.url)
+                with closing(discord.File("src/pic/Heart.png", filename="heart.png")) as file:
+                    embed.set_image(url="attachment://heart.png")
+                    await channel.send(file=file, embed=embed)
+            except Exception:
+                # Isolate each record so one failure cannot stop the daily task.
+                # asyncio.CancelledError still propagates when the task is cancelled.
+                log.exception(
+                    "Birthday notification failed: user_id=%s channel_id=%s date=%s",
+                    user_id, CHANNEL_HBD, today,
                 )
-                embed.add_field(name=f"{age}歲 生日快樂汪", value=f"嗷嗚~{EMOJI_BALL}", inline=False)
-            else:
-                await channel.send(f'祝{user.mention} 生日快樂!!')
-                embed = discord.Embed(\
-                    title=f"{name}生日快樂!!", \
-                    description=f"今天是{name}的生日!! \n快祝他生日快樂吧", \
-                    color=0xFC7B0A \
-                )
-                embed.add_field(name=f"生日快樂汪", value=f"嗷嗚~{EMOJI_BALL}", inline=False)
-                
-            embed.set_thumbnail(url=user.avatar)
-            file = discord.File("src/pic/Heart.png", filename="heart.png")
-            embed.set_image(url="attachment://heart.png")
-            await channel.send(file=file, embed=embed)
-        
-    
+
     @check_birthdays_loop.before_loop
     async def before_check_birthdays_loop(self):
         await self.bot.wait_until_ready()
